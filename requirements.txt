@@ -1,7 +1,7 @@
-# =====================================================================
+# =====================================================
 # Production Dependencies: Multi-Crop Disease Diagnosis System
 # Vision Transformer (DPD ViT-Base Dual-Head Model B)
-# =====================================================================
+# =====================================================
 
 # Deep Learning & Vision Transformer
 torch>=2.0.0
@@ -24,3 +24,7 @@ reportlab>=3.6.0
 pyjwt>=2.7.0
 passlib>=1.7.4
 cryptography>=40.0.0
+
+# Utilities & Model Download
+requests>=2.28.0
+gdown>=4.7.0

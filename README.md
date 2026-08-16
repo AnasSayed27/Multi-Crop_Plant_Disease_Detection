@@ -164,16 +164,21 @@ source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
-### Step 4: Download Model Weights
+### Step 4: Download Model Weights (Vision Transformer)
 
-The trained ViT model checkpoint (`model_b_partial_adapted.pth`, ~328 MB) is not included in the repository due to file size limits. Download and place it before running the application:
+The trained ViT production model checkpoint (`model_b_partial_adapted.pth`, **328 MB**) can be downloaded automatically or manually:
 
+**Option A — Automated Download (Recommended):**
 ```bash
-# Download model_b_partial_adapted.pth and place it in:
-# models_assets/model_b_partial_adapted.pth
+python scripts/download_model.py
 ```
 
-> **Note:** Contact the project author for the model file, or refer to the training scripts in `scripts/` to reproduce it using Google Colab GPU.
+**Option B — Manual Download from Google Drive:**
+1. Download [`model_b_partial_adapted.pth`](https://drive.google.com/file/d/1GdjtTcepE_VpGlrjZhBqDBBLma3rj_Bo/view?usp=sharing) (Direct Google Drive Link).
+2. Save or move the file into the **`models_assets/`** folder:
+   ```text
+   models_assets/model_b_partial_adapted.pth
+   ```
 
 ### Step 5: Start the Web App
 ```bash
