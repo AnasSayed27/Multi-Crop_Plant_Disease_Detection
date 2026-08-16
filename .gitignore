@@ -1,0 +1,58 @@
+# =====================================================
+# .gitignore — Multi-Crop Disease Detection System
+# =====================================================
+
+# ----- Python Runtime -----
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+
+# ----- IDE / Editor -----
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# ----- Model Weights (too large for GitHub) -----
+# Production checkpoint: model_b_partial_adapted.pth (328 MB)
+# See README.md for download/setup instructions
+*.pth
+*.keras
+*.h5
+*.tflite
+
+# ----- Datasets (too large for GitHub) -----
+Dataset/
+Potato_disease_dataset/
+
+# ----- DPD Research Infrastructure -----
+dpd/
+
+# ----- Legacy / Archived Models -----
+legacy_models/
+
+# ----- Temporary Directories -----
+temp_plantvillage_repo/
+temp_plantdoc_git/
+scratch/
+
+# ----- Benchmark Images (local evaluation only) -----
+plantdoc_realworld/
+test_real_images/
+
+# ----- Runtime-Generated User Data -----
+uploads/*.jpg
+uploads/*.jpeg
+uploads/*.png
+uploads/*.webp
+database.db
+
+# ----- Local Evaluation Results -----
+models_assets/consolidated_30_images_eval_results.json
+models_assets/t2_20_images_eval_results.json
+models_assets/model_a_plantdoc_details.json
+models_assets/dpd_crop_rankings.json
+models_assets/evaluation_metrics.json
+models_assets/ab_experiment_comparison.json

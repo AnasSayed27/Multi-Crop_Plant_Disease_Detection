@@ -1,0 +1,1543 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Multi-Crop Disease Detection & Advisory System</title>
+  
+  <!-- Google Fonts: Sora (Headings 600/700) + Inter (Body 400/500/600) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Sora:wght@600;700&display=swap" rel="stylesheet">
+  
+  <!-- Lucide Static Icons CDN -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <!-- Canvas Confetti CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
+
+  <style>
+    :root {
+      /* Color Tokens */
+      --color-primary: #1B4332;
+      --color-primary-light: #2D6A4F;
+      --color-accent: #40916C;
+      --color-bg: #FAF9F6;
+      --color-bg-elevated: #FFFFFF;
+      --color-text: #1A1A1A;
+      --color-text-muted: #6B7280;
+      --color-border: #E5E7EB;
+
+      /* Semantic Advisory Tokens */
+      --color-symptoms: #D97706;
+      --color-cause: #7C3AED;
+      --color-organic: #16A34A;
+      --color-chemical: #DC2626;
+      --color-prevention: #2563EB;
+
+      /* Legacy Variable Mapping */
+      --primary-color: var(--color-primary);
+      --primary-hover: var(--color-primary-light);
+      --bg-color: var(--color-bg);
+      --card-bg: var(--color-bg-elevated);
+      --text-dark: var(--color-text);
+      --border-color: var(--color-border);
+      --accent-blue: var(--color-prevention);
+      --accent-warning: var(--color-symptoms);
+      --accent-danger: var(--color-chemical);
+
+      /* Typography Scale */
+      --font-heading: 'Sora', sans-serif;
+      --font-body: 'Inter', sans-serif;
+
+      --text-xs: 0.75rem;    /* 12px */
+      --text-sm: 0.875rem;   /* 14px */
+      --text-base: 1rem;     /* 16px */
+      --text-lg: 1.125rem;   /* 18px */
+      --text-xl: 1.25rem;    /* 20px */
+      --text-2xl: 1.5rem;    /* 24px */
+      --text-3xl: 1.875rem;  /* 30px */
+
+      --leading-body: 1.5;
+      --leading-heading: 1.2;
+
+      /* Spacing Scale (4px base) */
+      --space-1: 4px;
+      --space-2: 8px;
+      --space-3: 12px;
+      --space-4: 16px;
+      --space-5: 20px;
+      --space-6: 24px;
+      --space-8: 32px;
+      --space-10: 40px;
+      --space-12: 48px;
+
+      /* Radius Tokens */
+      --radius-sm: 6px;
+      --radius-md: 10px;
+      --radius-lg: 16px;
+
+      /* Elevation Shadows */
+      --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05), 0 1px 2px rgba(0, 0, 0, 0.03);
+      --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.06), 0 2px 4px rgba(0, 0, 0, 0.03);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: var(--font-body);
+      background-color: var(--color-bg);
+      color: var(--color-text);
+      line-height: var(--leading-body);
+      -webkit-font-smoothing: antialiased;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      font-family: var(--font-heading);
+      line-height: var(--leading-heading);
+      color: var(--color-text);
+    }
+
+    /* Header & Navigation */
+    header {
+      background: var(--color-primary);
+      color: #ffffff;
+      padding: var(--space-4) var(--space-8);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: var(--shadow-md);
+    }
+    header h1 {
+      font-size: var(--text-xl);
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      color: #ffffff;
+    }
+    .nav-tabs { display: flex; gap: var(--space-2); }
+    .nav-tab {
+      background: transparent;
+      color: rgba(255, 255, 255, 0.85);
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      padding: var(--space-2) var(--space-4);
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      font-family: var(--font-body);
+      font-weight: 600;
+      font-size: var(--text-sm);
+      transition: all 150ms ease;
+    }
+    .nav-tab:hover {
+      background: rgba(255, 255, 255, 0.15);
+      color: #ffffff;
+      border-color: rgba(255, 255, 255, 0.4);
+    }
+    .nav-tab.active {
+      background: var(--color-primary-light);
+      color: #ffffff;
+      border-color: rgba(255, 255, 255, 0.5);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .auth-btn-group { display: flex; gap: var(--space-2); align-items: center; }
+    .auth-btn {
+      background: #ffffff;
+      color: var(--color-primary);
+      border: none;
+      padding: var(--space-2) var(--space-4);
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      font-family: var(--font-body);
+      font-weight: 600;
+      font-size: var(--text-sm);
+      transition: all 150ms ease;
+    }
+    .auth-btn:hover {
+      background: #E8F5E9;
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-sm);
+    }
+
+    /* Layout & Cards */
+    main { max-width: 1100px; margin: var(--space-8) auto; padding: 0 var(--space-5); }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+
+    .card {
+      background: var(--color-bg-elevated);
+      border-radius: var(--radius-lg);
+      padding: var(--space-6);
+      box-shadow: var(--shadow-sm);
+      margin-bottom: var(--space-6);
+      border: 1px solid var(--color-border);
+      transition: all 150ms ease;
+    }
+    h2 {
+      font-family: var(--font-heading);
+      color: var(--color-primary);
+      font-size: var(--text-2xl);
+      margin-bottom: var(--space-4);
+      border-bottom: 2px solid #E8F5E9;
+      padding-bottom: var(--space-2);
+    }
+
+    /* Form Inputs (Step 2) */
+    .form-group { margin-bottom: var(--space-4); }
+    .form-group label {
+      display: block;
+      font-size: var(--text-xs);
+      font-weight: 600;
+      color: var(--color-text-muted);
+      margin-bottom: var(--space-1);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    input[type="text"], input[type="email"], input[type="password"], select {
+      width: 100%;
+      height: 42px;
+      padding: 0 var(--space-4);
+      border-radius: var(--radius-md);
+      border: 1px solid var(--color-border);
+      font-family: var(--font-body);
+      font-size: var(--text-sm);
+      color: var(--color-text);
+      background: var(--color-bg-elevated);
+      transition: border-color 150ms ease, box-shadow 150ms ease;
+    }
+    input[type="text"]:focus, input[type="email"]:focus, input[type="password"]:focus, select:focus {
+      outline: none;
+      border-color: var(--color-accent);
+      box-shadow: 0 0 0 3px rgba(64, 145, 108, 0.2);
+    }
+
+    /* Buttons (Step 2) */
+    .btn-submit {
+      margin-top: var(--space-5);
+      width: 100%;
+      padding: var(--space-3) var(--space-5);
+      background: var(--color-primary);
+      color: #ffffff;
+      border: none;
+      border-radius: var(--radius-md);
+      font-family: var(--font-body);
+      font-size: var(--text-base);
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 150ms ease;
+    }
+    .btn-submit:hover {
+      background: var(--color-primary-light);
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-sm);
+    }
+    .btn-submit:active { transform: scale(0.98); }
+    .btn-submit:disabled { opacity: 0.6; pointer-events: none; }
+
+    /* Upload Dropzone (Step 3) */
+    .dropzone {
+      border: 2px dashed #A5D6A7;
+      border-radius: var(--radius-lg);
+      padding: var(--space-8);
+      text-align: center;
+      background: #F1F8E9;
+      cursor: pointer;
+      transition: all 150ms ease;
+      position: relative;
+    }
+    .dropzone:hover, .dropzone.drag-over {
+      background: rgba(64, 145, 108, 0.08);
+      border-color: var(--color-primary);
+      box-shadow: var(--shadow-md);
+    }
+    .dropzone input { display: none; }
+    .dropzone p, .dropzone span { color: var(--color-text-muted); font-size: var(--text-sm); margin-top: var(--space-2); pointer-events: none; }
+
+    /* Image Preview */
+    .preview-container { display: none; margin-top: var(--space-5); text-align: center; }
+    .preview-img {
+      max-width: 250px;
+      max-height: 250px;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--color-border);
+      object-fit: cover;
+      box-shadow: var(--shadow-sm);
+    }
+
+    /* Results UI & Progress Fill */
+    .result-section { display: none; margin-top: var(--space-6); }
+
+    .non-leaf-card {
+      background: #FFFBEB;
+      border: 1px solid #FDE68A;
+      border-radius: var(--radius-md);
+      padding: var(--space-5);
+      color: #B45309;
+      text-align: center;
+    }
+    .non-leaf-card h3 { font-size: var(--text-lg); margin-bottom: var(--space-2); color: #92400E; }
+
+    .diagnosis-header {
+      background: #E8F5E9;
+      border-left: 4px solid var(--color-primary);
+      padding: var(--space-4) var(--space-5);
+      border-radius: var(--radius-md);
+      margin-bottom: var(--space-5);
+    }
+    .diagnosis-title { font-size: var(--text-xl); font-weight: 700; color: var(--color-primary); }
+    
+    /* Pill Status Badges (Step 3) */
+    .diagnosis-status { display: inline-block; padding: 4px 12px; border-radius: 9999px; font-size: var(--text-xs); font-weight: 600; margin-top: var(--space-1); }
+    .status-healthy { background: #DCFCE7; color: #15803D; }
+    .status-diseased { background: #FEE2E2; color: #B91C1C; }
+
+    /* Progress Meter with smooth cubic-bezier transition */
+    .progress-bar-container { background: #E5E7EB; border-radius: 9999px; height: 12px; overflow: hidden; margin-top: var(--space-2); }
+    .progress-bar-fill { background: var(--color-primary); height: 100%; width: 0%; transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1); }
+
+    .warning-box {
+      background: #FEE2E2;
+      border: 1px solid #FCA5A5;
+      color: #991B1B;
+      padding: var(--space-3) var(--space-4);
+      border-radius: var(--radius-md);
+      font-size: var(--text-sm);
+      margin-top: var(--space-4);
+    }
+
+    .top3-list { list-style: none; margin-top: var(--space-3); }
+    .top3-item { display: flex; justify-content: space-between; padding: var(--space-2) var(--space-3); border-bottom: 1px solid var(--color-border); font-size: var(--text-sm); }
+
+    /* Advisory Grid & Semantic Color Badges (Step 3) */
+    .advisory-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-5); margin-top: var(--space-5); }
+    .advisory-card-full { grid-column: 1 / -1; }
+
+    .adv-module-card {
+      background: var(--color-bg-elevated);
+      border-radius: var(--radius-lg);
+      padding: var(--space-6);
+      border: 1px solid var(--color-border);
+      box-shadow: var(--shadow-sm);
+      transition: all 150ms ease;
+    }
+    .adv-module-card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
+    }
+
+    .adv-icon-badge {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin-right: var(--space-2);
+    }
+    .adv-icon-badge svg { width: 16px; height: 16px; stroke-width: 2.2; }
+
+    .adv-icon-symptoms { background: #FEF3C7; color: var(--color-symptoms); }
+    .adv-card-symptoms { border-left: 4px solid var(--color-symptoms); }
+    .adv-card-symptoms .adv-badge { background: #FEF3C7; color: #92400E; }
+    .adv-card-symptoms h4 { color: #92400E; }
+
+    .adv-icon-cause { background: #F3E8FF; color: var(--color-cause); }
+    .adv-card-cause { border-left: 4px solid var(--color-cause); }
+    .adv-card-cause .adv-badge { background: #F3E8FF; color: #5B21B6; }
+    .adv-card-cause h4 { color: #5B21B6; }
+
+    .adv-icon-organic { background: #DCFCE7; color: var(--color-organic); }
+    .adv-card-organic { border-left: 4px solid var(--color-organic); }
+    .adv-card-organic .adv-badge { background: #DCFCE7; color: #166534; }
+    .adv-card-organic h4 { color: #166534; }
+
+    .adv-icon-chemical { background: #FEE2E2; color: var(--color-chemical); }
+    .adv-card-chemical { border-left: 4px solid var(--color-chemical); }
+    .adv-card-chemical .adv-badge { background: #FEE2E2; color: #991B1B; }
+    .adv-card-chemical h4 { color: #991B1B; }
+
+    .adv-icon-prevention { background: #DBEAFE; color: var(--color-prevention); }
+    .adv-card-prevention { border-left: 4px solid var(--color-prevention); }
+    .adv-card-prevention .adv-badge { background: #DBEAFE; color: #1E40AF; }
+    .adv-card-prevention h4 { color: #1E40AF; }
+
+    .step-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--color-border);
+      cursor: pointer;
+      transition: all 150ms ease;
+    }
+    .step-dot.active-dot {
+      background: var(--color-primary);
+      transform: scale(1.35);
+    }
+
+    .adv-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: var(--space-3);
+      padding-bottom: var(--space-2);
+      border-bottom: 1px solid var(--color-border);
+    }
+    .adv-card-header h4 {
+      font-size: var(--text-base);
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      margin: 0;
+    }
+    .adv-badge {
+      font-size: var(--text-xs);
+      font-weight: 700;
+      padding: 3px 10px;
+      border-radius: 9999px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .adv-body-list { list-style: none; padding-left: 0; margin: 0; }
+    .adv-body-list li {
+      font-size: var(--text-sm);
+      color: var(--color-text);
+      margin-bottom: var(--space-2);
+      line-height: var(--leading-body);
+      position: relative;
+      padding-left: var(--space-4);
+    }
+    .adv-body-list li::before {
+      content: "•";
+      position: absolute;
+      left: 0;
+      font-weight: bold;
+      font-size: 1.1rem;
+      color: var(--color-primary);
+    }
+
+    /* Library & History Tables (Step 3) */
+    table { width: 100%; border-collapse: collapse; margin-top: var(--space-3); }
+    th, td { text-align: left; padding: var(--space-3) var(--space-4); border-bottom: 1px solid var(--color-border); font-size: var(--text-sm); }
+    th { background: #F8FAFC; color: var(--color-text-muted); font-weight: 600; }
+    tr:hover td { background: #F8FAFC; }
+    .thumb-img { width: 44px; height: 44px; border-radius: var(--radius-sm); object-fit: cover; }
+
+    /* Dashboard Stats Grid (Step 3) */
+    .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-5); margin-bottom: var(--space-6); }
+    .stat-card {
+      background: var(--color-bg-elevated);
+      border-radius: var(--radius-lg);
+      padding: var(--space-6);
+      border: 1px solid var(--color-border);
+      box-shadow: var(--shadow-sm);
+      text-align: center;
+      transition: all 150ms ease;
+    }
+    .stat-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
+    .stat-num { font-family: var(--font-heading); font-size: var(--text-3xl); font-weight: 700; color: var(--color-primary); margin-bottom: var(--space-1); }
+    .stat-label { font-size: var(--text-xs); font-weight: 600; color: var(--color-text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
+
+    /* SVG Circular Progress Ring (Step 3B) */
+    .confidence-ring-wrapper {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-6);
+      margin: var(--space-4) 0;
+      padding: var(--space-4);
+      background: #F8FAFC;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--color-border);
+    }
+    .ring-container {
+      position: relative;
+      width: 110px;
+      height: 110px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .progress-ring { transform: rotate(-90deg); }
+    .progress-ring-bg { stroke: #E5E7EB; stroke-width: 8; fill: transparent; }
+    .progress-ring-circle {
+      stroke: var(--color-primary);
+      stroke-width: 8;
+      stroke-linecap: round;
+      fill: transparent;
+      stroke-dasharray: 283; /* 2 * PI * 45 */
+      stroke-dashoffset: 283;
+      transition: stroke-dashoffset 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .ring-center-text {
+      position: absolute;
+      text-align: center;
+    }
+    .ring-num {
+      font-family: var(--font-heading);
+      font-size: var(--text-xl);
+      font-weight: 700;
+      color: var(--color-primary);
+      line-height: 1;
+    }
+    .ring-sub {
+      font-size: 0.7rem;
+      color: var(--color-text-muted);
+      font-weight: 600;
+      text-transform: uppercase;
+      margin-top: 2px;
+    }
+
+    /* Staggered Reveal Animations (Step 3B) */
+    .stagger-reveal {
+      opacity: 0;
+      transform: translateY(12px);
+      transition: opacity 0.4s ease, transform 0.4s ease;
+    }
+    .stagger-reveal.revealed {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .stagger-delay-1 { transition-delay: 100ms; }
+    .stagger-delay-2 { transition-delay: 250ms; }
+    .stagger-delay-3 { transition-delay: 400ms; }
+    .stagger-delay-4 { transition-delay: 550ms; }
+
+    /* Toast Notifications Utility (Step 3B) */
+    #toastContainer {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      z-index: 3000;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .toast-msg {
+      min-width: 280px;
+      padding: 12px 18px;
+      border-radius: var(--radius-md);
+      color: #ffffff;
+      font-size: var(--text-sm);
+      font-weight: 600;
+      box-shadow: var(--shadow-lg);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      transform: translateX(120%);
+      opacity: 0;
+      transition: transform 0.3s ease, opacity 0.3s ease;
+    }
+    .toast-msg.show {
+      transform: translateX(0);
+      opacity: 1;
+    }
+    .toast-success { background: #15803D; }
+    .toast-error { background: #B91C1C; }
+    .toast-info { background: #1E40AF; }
+
+    /* Skeleton Loading State (Step 4) */
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
+    .skeleton {
+      background: #E5E7EB;
+      border-radius: var(--radius-sm);
+      animation: pulse 1.5s ease-in-out infinite;
+    }
+    .skeleton-text { height: 16px; margin-bottom: 8px; width: 100%; }
+    .skeleton-text.short { width: 60%; }
+
+    /* Empty States (Step 4) */
+    .empty-state {
+      text-align: center;
+      padding: var(--space-8);
+      color: var(--color-text-muted);
+    }
+    .empty-state svg { width: 48px; height: 48px; stroke: var(--color-text-muted); opacity: 0.5; margin-bottom: var(--space-3); }
+    .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-bottom: 20px; }
+    .stat-card { background: #f8fafc; border: 1px solid var(--border-color); padding: 20px; border-radius: 8px; text-align: center; }
+    .stat-num { font-size: 1.8rem; font-weight: 700; color: var(--primary-color); }
+    .stat-label { font-size: 0.85rem; color: var(--text-muted); margin-top: 4px; }
+
+    /* Modal Dialog */
+    .modal-overlay {
+      position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.5);
+      display: none; justify-content: center; align-items: center;
+      z-index: 1000;
+    }
+    .modal-box { background: white; padding: 25px; border-radius: 10px; width: 380px; max-width: 90%; }
+    .modal-box h3 { margin-bottom: 15px; color: var(--primary-color); }
+    .form-group { margin-bottom: 12px; }
+    .form-group label { display: block; font-size: 0.85rem; margin-bottom: 4px; color: var(--text-muted); }
+    .form-group input { width: 100%; padding: 8px 12px; border: 1px solid var(--border-color); border-radius: 6px; font-size: 0.95rem; }
+    .modal-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 15px; }
+
+    @media (max-width: 768px) {
+      .advisory-grid { grid-template-columns: 1fr; }
+      .stats-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header & Navigation -->
+  <header>
+    <h1>🌿 Multi-Crop Disease Advisory</h1>
+    <div class="nav-tabs">
+      <button class="nav-tab active" onclick="switchTab('classifier')">Classifier</button>
+      <button class="nav-tab" onclick="switchTab('library')">Disease Library</button>
+      <button class="nav-tab" onclick="switchTab('history')">History</button>
+      <button class="nav-tab" onclick="switchTab('dashboard')">Dashboard</button>
+    </div>
+    <div class="auth-btn-group" id="authBtnGroup">
+      <button class="auth-btn" onclick="openAuthModal('login')">Login</button>
+      <button class="auth-btn" onclick="openAuthModal('register')">Register</button>
+    </div>
+  </header>
+
+  <main>
+    <!-- TAB 1: DISEASE CLASSIFIER -->
+    <div id="classifierTab" class="tab-content active">
+      <div class="card">
+        <h2>Leaf Disease Diagnostic System</h2>
+        <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 15px;">
+          Upload a clear photograph of a crop leaf to detect disease status and receive targeted treatment recommendations.
+        </p>
+
+        <form id="uploadForm">
+          <div class="dropzone" id="dropzone" onclick="document.getElementById('fileInput').click()">
+            <input type="file" id="fileInput" accept="image/*" required>
+            <span style="font-size: 2rem;">📷</span>
+            <p><strong>Click to browse</strong> or drag & drop leaf image here</p>
+          </div>
+
+          <div class="preview-container" id="previewContainer">
+            <img id="previewImg" class="preview-img" src="#" alt="Uploaded Leaf Preview">
+          </div>
+
+          <button type="submit" class="btn-submit" id="submitBtn">Analyze Leaf Image</button>
+        </form>
+
+        <div id="loadingSpinner" style="display: none; text-align: center; margin-top: 20px; color: var(--primary-color);">
+          <strong>Running MobileNetV2 Deep Learning Inference...</strong>
+        </div>
+
+        <!-- RESULTS SECTION -->
+        <div id="resultSection" class="result-section">
+          <!-- Non-Leaf Background Case -->
+          <div id="nonLeafCard" class="non-leaf-card" style="display: none;">
+            <h3>⚠️ No Plant Leaf Detected</h3>
+            <p id="nonLeafMsg">The uploaded image does not contain a recognized crop leaf. Please upload a clear photo of a plant leaf.</p>
+          </div>
+
+          <!-- Plant Disease Case -->
+          <div id="diseaseResultsCard" style="display: none;">
+            <!-- Stagger 1: Diagnosis Header -->
+            <div class="diagnosis-header stagger-reveal stagger-delay-1">
+              <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+                <div class="diagnosis-title" id="diagTitle">Crop — Disease Name</div>
+                <button id="pdfDownloadBtn" onclick="downloadPdfReport()" style="display: none; background: #1B4332; color: white; border: none; padding: 8px 16px; border-radius: var(--radius-md); font-size: var(--text-xs); font-weight: 700; cursor: pointer; transition: all 150ms ease;">
+                  📄 Download PDF Report
+                </button>
+              </div>
+              <span class="diagnosis-status" id="diagStatus">Healthy</span>
+            </div>
+
+            <!-- Stagger 2: SVG Circular Progress Ring -->
+            <div class="confidence-ring-wrapper stagger-reveal stagger-delay-2">
+              <div class="ring-container">
+                <svg class="progress-ring" width="110" height="110">
+                  <circle class="progress-ring-bg" cx="55" cy="55" r="45" />
+                  <circle class="progress-ring-circle" id="confidenceRingCircle" cx="55" cy="55" r="45" />
+                </svg>
+                <div class="ring-center-text">
+                  <div class="ring-num" id="diagConfidence">0%</div>
+                  <div class="ring-sub">Confidence</div>
+                </div>
+              </div>
+              <div>
+                <h4 style="margin: 0; font-size: var(--text-base); color: var(--color-primary);">AI Inference Confidence Score</h4>
+                <p style="margin: 4px 0 0 0; font-size: var(--text-xs); color: var(--color-text-muted);">
+                  MobileNetV2 deep learning neural network probability assessment based on visual leaf characteristics.
+                </p>
+              </div>
+            </div>
+
+            <div id="lowConfWarning" class="warning-box stagger-reveal stagger-delay-2" style="display: none;">
+              ⚠️ Low confidence prediction (< 50%). Consider uploading a clearer, better-lit photograph for accurate diagnosis.
+            </div>
+
+            <!-- Stagger 3: Top-3 Probabilities -->
+            <div style="margin-top: 20px;" class="stagger-reveal stagger-delay-3">
+              <h4 style="font-size: var(--text-base); color: var(--color-text);">Top 3 Probable Predictions</h4>
+              <ul class="top3-list" id="top3List"></ul>
+            </div>
+
+            <!-- Stagger 4: Guided Diagnostic Advisory Suite Banner -->
+            <div class="stagger-reveal stagger-delay-4" style="margin-top: 25px; background: linear-gradient(135deg, #E8F5E9 0%, #FFFFFF 100%); border: 1px solid #A5D6A7; border-radius: var(--radius-lg); padding: var(--space-6); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 15px; box-shadow: var(--shadow-sm);">
+              <div>
+                <h3 style="color: var(--color-primary); margin: 0; font-size: var(--text-lg); display: flex; align-items: center; gap: 8px;">
+                  <span>✨</span> Guided Agronomic Advisory Suite
+                </h3>
+                <p style="color: var(--color-text-muted); font-size: var(--text-sm); margin-top: 6px; margin-bottom: 0;">
+                  Interactive 3-Step Consultation: Symptoms, Pathogen Causes, Biological & Chemical Treatments, and Prevention Manual.
+                </p>
+              </div>
+              <button onclick="openAdvisoryModal()" style="background: var(--color-primary); color: white; border: none; padding: 11px 22px; border-radius: var(--radius-md); font-weight: 600; font-size: var(--text-sm); cursor: pointer; box-shadow: var(--shadow-sm); transition: all 150ms ease;">
+                Launch Guided Advisory Panel ✨
+              </button>
+            </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 2: DISEASE LIBRARY -->
+    <div id="libraryTab" class="tab-content">
+      <div class="card">
+        <h2>Supported Crops & Disease Library</h2>
+        <input type="text" id="librarySearch" placeholder="Search by crop or disease name..." onkeyup="filterLibrary()" style="width: 100%; padding: 10px; border: 1px solid var(--border-color); border-radius: 6px; margin-bottom: 15px;">
+        <div id="libraryContainer">Loading library...</div>
+      </div>
+    </div>
+
+    <!-- TAB 3: PREDICTION HISTORY -->
+    <div id="historyTab" class="tab-content">
+      <div class="card">
+        <h2>Personal Prediction History</h2>
+        <div id="historyAuthNotice" style="display: none; color: var(--text-muted);">
+          Please log in to view your saved prediction history.
+        </div>
+        <div id="historyTableContainer">
+          <table>
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Thumbnail</th>
+                <th>Crop</th>
+                <th>Disease Prediction</th>
+                <th>Confidence</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="historyTbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 4: USER DASHBOARD -->
+    <div id="dashboardTab" class="tab-content">
+      <div class="card">
+        <h2>Personal Statistics Dashboard</h2>
+        <div id="dashAuthNotice" style="display: none; color: var(--text-muted);">
+          Please log in to view your personal statistics dashboard.
+        </div>
+        <div id="dashContent" style="display: none;">
+          <div class="stats-grid">
+            <div class="stat-card">
+              <div class="stat-num" id="statTotalScans">0</div>
+              <div class="stat-label">Total Leaf Scans</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-num" id="statAvgConf">0%</div>
+              <div class="stat-label">Average Confidence</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-num" id="statTopDisease" style="font-size: 1.2rem;">-</div>
+              <div class="stat-label">Most Frequent Disease</div>
+            </div>
+          </div>
+          <!-- Chart.js Micro-Interaction Grid (Step 3B) -->
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-6); margin-top: var(--space-6);">
+            <div style="background: var(--color-bg-elevated); padding: var(--space-5); border-radius: var(--radius-lg); border: 1px solid var(--color-border); box-shadow: var(--shadow-sm);">
+              <h3 style="font-size: var(--text-base); margin-bottom: var(--space-3); color: var(--color-primary);">Crop Distribution</h3>
+              <div style="height: 240px; position: relative;">
+                <canvas id="cropDonutChart"></canvas>
+              </div>
+            </div>
+            <div style="background: var(--color-bg-elevated); padding: var(--space-5); border-radius: var(--radius-lg); border: 1px solid var(--color-border); box-shadow: var(--shadow-sm);">
+              <h3 style="font-size: var(--text-base); margin-bottom: var(--space-3); color: var(--color-primary);">Predictions Breakdown</h3>
+              <div style="height: 240px; position: relative;">
+                <canvas id="diseaseBarChart"></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- AUTH MODAL DIALOG -->
+  <div class="modal-overlay" id="authModal">
+    <div class="modal-box">
+      <h3 id="modalTitle">Login</h3>
+      <form id="authForm" onsubmit="handleAuthSubmit(event)">
+        <div class="form-group" id="groupUsername" style="display: none;">
+          <label>Username</label>
+          <input type="text" id="authUsername">
+        </div>
+        <div class="form-group">
+          <label id="lblUserOrEmail">Username or Email</label>
+          <input type="text" id="authUserOrEmail" required>
+        </div>
+        <div class="form-group">
+          <label>Password</label>
+          <input type="password" id="authPassword" required>
+        </div>
+        <div id="authError" style="color: var(--accent-danger); font-size: 0.85rem; margin-top: 5px;"></div>
+        <div class="modal-actions">
+          <button type="button" class="auth-btn" style="background: #eee; color: #333;" onclick="closeAuthModal()">Cancel</button>
+          <button type="submit" class="auth-btn" style="background: var(--primary-color); color: white;">Submit</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 3-STEP GUIDED DIAGNOSTIC ADVISORY MODAL OVERLAY -->
+  <div class="modal-overlay" id="advisoryModal" style="display: none; z-index: 2000;">
+    <div style="background: #ffffff; border-radius: 16px; width: 800px; max-width: 94%; max-height: 90vh; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 20px 50px rgba(0,0,0,0.3);">
+      
+      <!-- Modal Header -->
+      <div style="background: #1b5e20; color: white; padding: 18px 24px; display: flex; justify-content: space-between; align-items: center;">
+        <div>
+          <h3 style="margin: 0; font-size: 1.2rem; color: white; display: flex; align-items: center; gap: 8px;">
+            <span>🌿</span> Guided Agronomic Consultation
+          </h3>
+          <span style="font-size: 0.85rem; opacity: 0.9;" id="modalCropDiseaseTitle">Crop Diagnosis Advisory</span>
+        </div>
+        <div style="display: flex; align-items: center; gap: 15px;">
+          <span style="font-size: 0.82rem; background: rgba(255,255,255,0.2); padding: 4px 12px; border-radius: 20px; font-weight: 700; color: white;" id="advStepBadge">Step 1 of 3</span>
+          <button onclick="closeAdvisoryModal()" style="background: none; border: none; color: white; font-size: 1.6rem; cursor: pointer; line-height: 1; padding: 0;">&times;</button>
+        </div>
+      </div>
+
+      <!-- Modal Body (Scrollable) -->
+      <div style="padding: 24px; overflow-y: auto; flex: 1; background: #f8fafc;">
+        
+        <!-- STEP 1: Symptoms & Pathogen/Cause -->
+        <div id="advStepPanel1" class="adv-step-panel">
+          <div style="margin-bottom: 18px;">
+            <h4 style="color: #1b5e20; font-size: 1.1rem; margin: 0 0 4px 0;">Step 1: Visual Markers & Causative Agent</h4>
+            <p style="color: #64748b; font-size: 0.85rem; margin: 0;">Analyze observed physical leaf symptoms and underlying environmental disease triggers.</p>
+          </div>
+          <div class="advisory-grid" style="margin-top: 0;">
+            <div class="adv-module-card adv-card-symptoms">
+              <div class="adv-card-header">
+                <h4><span class="adv-icon-badge adv-icon-symptoms"><i data-lucide="search"></i></span> Visual Leaf Symptoms</h4>
+                <span class="adv-badge">Diagnostic Markers</span>
+              </div>
+              <div id="advSymptoms">-</div>
+            </div>
+            <div class="adv-module-card adv-card-cause">
+              <div class="adv-card-header">
+                <h4><span class="adv-icon-badge adv-icon-cause"><i data-lucide="flask-conical"></i></span> Pathogen & Cause</h4>
+                <span class="adv-badge">Causative Agent</span>
+              </div>
+              <div id="advCause">-</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- STEP 2: Organic & Chemical Treatments -->
+        <div id="advStepPanel2" class="adv-step-panel" style="display: none;">
+          <div style="margin-bottom: 18px;">
+            <h4 style="color: #1b5e20; font-size: 1.1rem; margin: 0 0 4px 0;">Step 2: Actionable Treatment Options</h4>
+            <p style="color: #64748b; font-size: 0.85rem; margin: 0;">Eco-friendly biological controls and targeted active chemical fungicide solutions.</p>
+          </div>
+          <div class="advisory-grid" style="margin-top: 0;">
+            <div class="adv-module-card adv-card-organic">
+              <div class="adv-card-header">
+                <h4><span class="adv-icon-badge adv-icon-organic"><i data-lucide="leaf"></i></span> Organic & Bio Control</h4>
+                <span class="adv-badge">Eco-Friendly</span>
+              </div>
+              <div id="advOrganic">-</div>
+            </div>
+            <div class="adv-module-card adv-card-chemical">
+              <div class="adv-card-header">
+                <h4><span class="adv-icon-badge adv-icon-chemical"><i data-lucide="pill"></i></span> Chemical Control & Dosage</h4>
+                <span class="adv-badge">Targeted Actions</span>
+              </div>
+              <div id="advChemical">-</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- STEP 3: Proactive Cultural Prevention (Displayed directly in full without collapsable dropdown!) -->
+        <div id="advStepPanel3" class="adv-step-panel" style="display: none;">
+          <div style="margin-bottom: 18px;">
+            <h4 style="color: #1b5e20; font-size: 1.1rem; margin: 0 0 4px 0;">Step 3: Proactive Cultural Prevention Manual</h4>
+            <p style="color: #64748b; font-size: 0.85rem; margin: 0;">Long-term soil sanitation, crop rotation rules, irrigation management, and field immunity.</p>
+          </div>
+          <div class="adv-module-card adv-card-prevention" style="width: 100%;">
+            <div class="adv-card-header">
+              <h4><span class="adv-icon-badge adv-icon-prevention"><i data-lucide="shield-check"></i></span> Proactive Prevention & Cultural Practices</h4>
+              <span class="adv-badge">Long-term Field Sanitation</span>
+            </div>
+            <div id="advPrevention" style="margin-top: 12px;">-</div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Modal Footer Navigation -->
+      <div style="background: #ffffff; border-top: 1px solid #e2e8f0; padding: 16px 24px; display: flex; justify-content: space-between; align-items: center;">
+        <button id="advPrevBtn" onclick="prevAdvisoryStep()" style="background: #f1f5f9; color: #475569; border: 1px solid #cbd5e1; padding: 9px 20px; border-radius: 8px; font-weight: 700; font-size: 0.9rem; cursor: pointer; transition: all 0.2s ease;">
+          ◀ Previous Step
+        </button>
+
+        <div style="display: flex; gap: 10px; align-items: center;" id="advStepDots">
+          <span class="step-dot active-dot" onclick="goAdvisoryStep(1)"></span>
+          <span class="step-dot" onclick="goAdvisoryStep(2)"></span>
+          <span class="step-dot" onclick="goAdvisoryStep(3)"></span>
+        </div>
+
+        <button id="advNextBtn" onclick="nextAdvisoryStep()" style="background: #1b5e20; color: white; border: none; padding: 9px 22px; border-radius: 8px; font-weight: 700; font-size: 0.9rem; cursor: pointer; transition: all 0.2s ease; box-shadow: 0 4px 12px rgba(27,94,32,0.2);">
+          Next Step ▶
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    let currentAuthMode = 'login';
+    let libraryData = [];
+
+    // Tab Switching
+    function switchTab(tabName) {
+      document.querySelectorAll('.nav-tab').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+
+      event.target.classList.add('active');
+      document.getElementById(tabName + 'Tab').classList.add('active');
+
+      if (tabName === 'library') loadLibrary();
+      if (tabName === 'history') loadHistory();
+      if (tabName === 'dashboard') loadDashboard();
+    }
+
+    // JWT Helpers
+    function getToken() { return localStorage.getItem('plant_disease_jwt_token'); }
+    function setToken(token) { localStorage.setItem('plant_disease_jwt_token', token); updateAuthUI(); }
+    function clearToken() { localStorage.removeItem('plant_disease_jwt_token'); updateAuthUI(); }
+
+    function updateAuthUI() {
+      const token = getToken();
+      const group = document.getElementById('authBtnGroup');
+      if (token) {
+        group.innerHTML = `<span style="font-size: 0.85rem; margin-right: 5px;">Logged In</span>
+                           <button class="auth-btn" onclick="clearToken()">Logout</button>`;
+      } else {
+        group.innerHTML = `<button class="auth-btn" onclick="openAuthModal('login')">Login</button>
+                           <button class="auth-btn" onclick="openAuthModal('register')">Register</button>`;
+      }
+    }
+
+    // Modal Control
+    function openAuthModal(mode) {
+      currentAuthMode = mode;
+      document.getElementById('authError').innerText = '';
+      document.getElementById('modalTitle').innerText = mode === 'login' ? 'Login' : 'Register User';
+      document.getElementById('groupUsername').style.display = mode === 'register' ? 'block' : 'none';
+      document.getElementById('lblUserOrEmail').innerText = mode === 'register' ? 'Email Address' : 'Username or Email';
+      document.getElementById('authModal').style.display = 'flex';
+    }
+    function closeAuthModal() { document.getElementById('authModal').style.display = 'none'; }
+
+    async function handleAuthSubmit(e) {
+      e.preventDefault();
+      document.getElementById('authError').innerText = '';
+      const uOrE = document.getElementById('authUserOrEmail').value;
+      const pwd = document.getElementById('authPassword').value;
+
+      let url = '/auth/login';
+      let body = { username_or_email: uOrE, password: pwd };
+
+      if (currentAuthMode === 'register') {
+        url = '/auth/register';
+        const uname = document.getElementById('authUsername').value;
+        body = { username: uname, email: uOrE, password: pwd };
+      }
+
+      try {
+        const res = await fetch(url, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(body)
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.detail || 'Authentication failed');
+        setToken(data.access_token);
+        closeAuthModal();
+        showToast('Authenticated successfully!', 'success');
+      } catch (err) {
+        document.getElementById('authError').innerText = err.message;
+      }
+    }
+
+    // Toast Utility (Step 3B)
+    function showToast(message, type = 'info') {
+      let container = document.getElementById('toastContainer');
+      if (!container) {
+        container = document.createElement('div');
+        container.id = 'toastContainer';
+        document.body.appendChild(container);
+      }
+      const toast = document.createElement('div');
+      toast.className = `toast-msg toast-${type}`;
+      toast.innerHTML = `
+        <span>${message}</span>
+        <button onclick="this.parentElement.remove()" style="background:none; border:none; color:white; font-size:1.2rem; cursor:pointer;">&times;</button>
+      `;
+      container.appendChild(toast);
+      requestAnimationFrame(() => toast.classList.add('show'));
+      setTimeout(() => {
+        toast.classList.remove('show');
+        setTimeout(() => toast.remove(), 300);
+      }, 4000);
+    }
+
+    // Count-Up Animation Utility (Step 3B)
+    function animateCountUp(elementId, targetValue, isPercentage = false) {
+      const el = document.getElementById(elementId);
+      if (!el) return;
+      const duration = 900;
+      const startTime = performance.now();
+      
+      function update(currentTime) {
+        const elapsed = currentTime - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+        const easeProgress = 1 - Math.pow(1 - progress, 3);
+        const currentVal = targetValue * easeProgress;
+        
+        if (isPercentage) {
+          el.innerText = `${currentVal.toFixed(1)}%`;
+        } else {
+          el.innerText = Math.round(currentVal);
+        }
+        if (progress < 1) requestAnimationFrame(update);
+      }
+      requestAnimationFrame(update);
+    }
+
+    // Image Preview & Drag and Drop Handling
+    const dropzone = document.getElementById('dropzone');
+    const fileInput = document.getElementById('fileInput');
+    const previewImg = document.getElementById('previewImg');
+    const previewContainer = document.getElementById('previewContainer');
+
+    function handleFile(file) {
+      if (file && file.type.startsWith('image/')) {
+        const reader = new FileReader();
+        reader.onload = e => {
+          previewImg.src = e.target.result;
+          previewContainer.style.display = 'block';
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+
+    fileInput.onchange = () => {
+      if (fileInput.files.length > 0) {
+        handleFile(fileInput.files[0]);
+      }
+    };
+
+    // HTML5 Drag & Drop Event Listeners
+    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+      dropzone.addEventListener(eventName, e => {
+        e.preventDefault();
+        e.stopPropagation();
+      }, false);
+    });
+
+    ['dragenter', 'dragover'].forEach(eventName => {
+      dropzone.addEventListener(eventName, () => {
+        dropzone.classList.add('drag-over');
+      }, false);
+    });
+
+    ['dragleave', 'drop'].forEach(eventName => {
+      dropzone.addEventListener(eventName, () => {
+        dropzone.classList.remove('drag-over');
+      }, false);
+    });
+
+    dropzone.addEventListener('drop', e => {
+      const dt = e.dataTransfer;
+      const files = dt.files;
+      if (files && files.length > 0) {
+        fileInput.files = files;
+        handleFile(files[0]);
+      }
+    }, false);
+
+    // Upload & Predict Form
+    document.getElementById('uploadForm').onsubmit = async evt => {
+      evt.preventDefault();
+      if (!fileInput.files[0]) return;
+
+      const submitBtn = document.getElementById('submitBtn');
+      const spinner = document.getElementById('loadingSpinner');
+      const resultSec = document.getElementById('resultSection');
+
+      submitBtn.disabled = true;
+      spinner.style.display = 'block';
+      resultSec.style.display = 'none';
+
+      const formData = new FormData();
+      formData.append('file', fileInput.files[0]);
+
+      const headers = {};
+      const token = getToken();
+      if (token) headers['Authorization'] = `Bearer ${token}`;
+
+      try {
+        const response = await fetch('/predict', {
+          method: 'POST',
+          headers: headers,
+          body: formData
+        });
+
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.detail || 'Prediction failed');
+
+        renderResults(data);
+
+      } catch (err) {
+        showToast(err.message, 'error');
+      } finally {
+        submitBtn.disabled = false;
+        spinner.style.display = 'none';
+      }
+    };
+
+    function renderResults(data) {
+      const resultSec = document.getElementById('resultSection');
+      const nonLeafCard = document.getElementById('nonLeafCard');
+      const diseaseCard = document.getElementById('diseaseResultsCard');
+
+      resultSec.style.display = 'block';
+
+      if (data.is_background) {
+        nonLeafCard.style.display = 'block';
+        diseaseCard.style.display = 'none';
+        document.getElementById('nonLeafMsg').innerText = data.message;
+        return;
+      }
+
+      nonLeafCard.style.display = 'none';
+      diseaseCard.style.display = 'block';
+
+      // Track prediction ID for PDF Download
+      currentPredictionId = data.prediction_id || null;
+      const pdfBtn = document.getElementById('pdfDownloadBtn');
+      if (currentPredictionId) {
+        pdfBtn.style.display = 'inline-block';
+      } else {
+        pdfBtn.style.display = 'none';
+      }
+
+      // Title & Status
+      const fullTitle = `${data.crop} — ${data.disease}`;
+      document.getElementById('diagTitle').innerText = fullTitle;
+      const modalTitle = document.getElementById('modalCropDiseaseTitle');
+      if (modalTitle) modalTitle.innerText = fullTitle;
+      const statusSpan = document.getElementById('diagStatus');
+      statusSpan.innerText = data.status;
+      statusSpan.className = 'diagnosis-status ' + (data.status === 'Healthy' ? 'status-healthy' : 'status-diseased');
+
+      // Confidence Score SVG Circular Progress Ring (Step 3B)
+      document.getElementById('diagConfidence').innerText = `${data.confidence.toFixed(1)}%`;
+      const radius = 45;
+      const circumference = 2 * Math.PI * radius;
+      const offset = circumference - (data.confidence / 100) * circumference;
+
+      const ringCircle = document.getElementById('confidenceRingCircle');
+      if (ringCircle) {
+        ringCircle.style.strokeDasharray = `${circumference}`;
+        ringCircle.style.strokeDashoffset = `${circumference}`;
+        requestAnimationFrame(() => {
+          ringCircle.style.strokeDashoffset = `${offset}`;
+        });
+      }
+
+      // Trigger Staggered Reveal Animations (Step 3B)
+      document.querySelectorAll('.stagger-reveal').forEach(el => el.classList.remove('revealed'));
+      requestAnimationFrame(() => {
+        document.querySelectorAll('.stagger-reveal').forEach(el => el.classList.add('revealed'));
+      });
+
+      // Celebratory Confetti Burst for Healthy Crop (Step 3B)
+      if (data.status === 'Healthy' || (data.disease && data.disease.toLowerCase().includes('healthy'))) {
+        if (window.confetti) {
+          confetti({
+            particleCount: 80,
+            spread: 70,
+            origin: { y: 0.6 }
+          });
+        }
+      }
+
+      // Low confidence box
+      document.getElementById('lowConfWarning').style.display = data.is_low_confidence ? 'block' : 'none';
+
+      // Top 3 List
+      const top3List = document.getElementById('top3List');
+      top3List.innerHTML = data.top_3_predictions.map(p => `
+        <li class="top3-item">
+          <span><strong>${p.crop}</strong> - ${p.disease}</span>
+          <span>${p.confidence.toFixed(2)}%</span>
+        </li>
+      `).join('');
+
+      // Advisory Cards with Rich HTML List Formatting
+      document.getElementById('advSymptoms').innerHTML = formatAdvisoryList(data.advisory.symptoms);
+      document.getElementById('advCause').innerHTML = formatAdvisoryList(data.advisory.cause);
+      document.getElementById('advOrganic').innerHTML = formatAdvisoryList(data.advisory.organic_treatment);
+      document.getElementById('advChemical').innerHTML = formatAdvisoryList(data.advisory.chemical_treatment);
+      document.getElementById('advPrevention').innerHTML = formatAdvisoryList(data.advisory.prevention);
+    }
+
+    // Helper to convert Markdown asterisks (*text* -> <em>text</em>, **text** -> <strong>text</strong>)
+    function parseMarkdownFormatting(text) {
+      if (!text) return '';
+      let formatted = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+      formatted = formatted.replace(/\*(.*?)\*/g, '<em style="font-style: italic; color: #2e7d32;">$1</em>');
+      return formatted;
+    }
+
+    // Advisory Cards Helper
+    function formatAdvisoryList(rawText) {
+      if (!rawText || rawText === '-') return '<p style="color: #64748b; font-size: 0.9rem;">No specific guidance required.</p>';
+      const lines = rawText.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+      if (lines.length === 0) return '<p style="color: #64748b; font-size: 0.9rem;">No specific guidance required.</p>';
+
+      const itemsHtml = lines.map(line => {
+        // Strip any non-alphanumeric leading emojis, symbols, or unrendered fallback characters
+        let clean = line.replace(/^[^a-zA-Z0-9\s]+/u, '').trim();
+        // Emphasize key terms before colon or dash
+        clean = clean.replace(/^([^:—\-]+[:—\-])/, '<strong>$1</strong>');
+        clean = parseMarkdownFormatting(clean);
+        return `<li>${clean}</li>`;
+      }).join('');
+
+      return `<ul class="adv-body-list">${itemsHtml}</ul>`;
+    }
+
+    // 3-Step Guided Advisory Modal Controller
+    let currentAdvisoryStep = 1;
+
+    function openAdvisoryModal() {
+      const modal = document.getElementById('advisoryModal');
+      if (modal) {
+        modal.style.display = 'flex';
+        goAdvisoryStep(1);
+        if (window.lucide) lucide.createIcons();
+      }
+    }
+
+    function closeAdvisoryModal() {
+      const modal = document.getElementById('advisoryModal');
+      if (modal) modal.style.display = 'none';
+    }
+
+    function goAdvisoryStep(stepNum) {
+      currentAdvisoryStep = stepNum;
+      [1, 2, 3].forEach(n => {
+        const panel = document.getElementById(`advStepPanel${n}`);
+        if (panel) panel.style.display = (n === stepNum) ? 'block' : 'none';
+      });
+
+      const badge = document.getElementById('advStepBadge');
+      if (badge) badge.innerText = `Step ${stepNum} of 3`;
+
+      // Update Step Dots
+      const dots = document.querySelectorAll('.step-dot');
+      dots.forEach((dot, idx) => {
+        if (idx + 1 === stepNum) {
+          dot.classList.add('active-dot');
+        } else {
+          dot.classList.remove('active-dot');
+        }
+      });
+
+      // Update Navigation Buttons
+      const prevBtn = document.getElementById('advPrevBtn');
+      const nextBtn = document.getElementById('advNextBtn');
+      
+      if (prevBtn) prevBtn.style.visibility = (stepNum === 1) ? 'hidden' : 'visible';
+
+      if (nextBtn) {
+        if (stepNum === 3) {
+          nextBtn.innerText = 'Done ✔';
+          nextBtn.style.background = '#2e7d32';
+        } else {
+          nextBtn.innerText = 'Next Step ▶';
+          nextBtn.style.background = '#1b5e20';
+        }
+      }
+    }
+
+    function prevAdvisoryStep() {
+      if (currentAdvisoryStep > 1) goAdvisoryStep(currentAdvisoryStep - 1);
+    }
+
+    function nextAdvisoryStep() {
+      if (currentAdvisoryStep < 3) {
+        goAdvisoryStep(currentAdvisoryStep + 1);
+      } else {
+        closeAdvisoryModal();
+      }
+    }
+
+    // Keyboard navigation listener for Modal
+    document.addEventListener('keydown', e => {
+      const modal = document.getElementById('advisoryModal');
+      if (modal && modal.style.display === 'flex') {
+        if (e.key === 'Escape') closeAdvisoryModal();
+        if (e.key === 'ArrowRight') nextAdvisoryStep();
+        if (e.key === 'ArrowLeft') prevAdvisoryStep();
+      }
+    });
+
+    // Load Disease Library
+    async function loadLibrary() {
+      try {
+        const res = await fetch('/api/library');
+        const data = await res.json();
+        libraryData = data.library || [];
+        renderLibrary(libraryData);
+      } catch (err) {
+        document.getElementById('libraryContainer').innerText = 'Failed to load disease library.';
+      }
+    }
+
+    // Helper for clean single line summary
+    function getCleanFirstLine(text) {
+      if (!text) return 'No information available.';
+      const line = text.split('\n').map(l => l.trim()).find(l => l.length > 0) || text;
+      let clean = line.replace(/^[^a-zA-Z0-9\s]+/u, '').trim();
+      return parseMarkdownFormatting(clean);
+    }
+
+    function renderLibrary(items) {
+      const container = document.getElementById('libraryContainer');
+      if (items.length === 0) {
+        container.innerHTML = '<p style="color: var(--text-muted);">No items found.</p>';
+        return;
+      }
+
+      container.innerHTML = items.map(item => `
+        <div style="background: #fafafa; border: 1px solid var(--border-color); border-radius: 8px; padding: 15px; margin-bottom: 12px;">
+          <h3 style="color: var(--primary-color); font-size: 1.1rem; margin-bottom: 4px;">${item.crop} — ${item.disease}</h3>
+          <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 8px;">Status: <strong>${item.status}</strong></p>
+          <p style="font-size: 0.9rem; margin-bottom: 4px;"><strong>Symptoms:</strong> ${getCleanFirstLine(item.symptoms)}</p>
+          <p style="font-size: 0.9rem;"><strong>Prevention:</strong> ${getCleanFirstLine(item.prevention)}</p>
+        </div>
+      `).join('');
+    }
+
+    function filterLibrary() {
+      const query = document.getElementById('librarySearch').value.toLowerCase();
+      const filtered = libraryData.filter(i => 
+        i.crop.toLowerCase().includes(query) || i.disease.toLowerCase().includes(query)
+      );
+      renderLibrary(filtered);
+    }
+
+    // Load History
+    async function loadHistory() {
+      const token = getToken();
+      const notice = document.getElementById('historyAuthNotice');
+      const table = document.getElementById('historyTableContainer');
+
+      if (!token) {
+        notice.style.display = 'block';
+        table.style.display = 'none';
+        return;
+      }
+
+      notice.style.display = 'none';
+      table.style.display = 'block';
+
+      try {
+        const res = await fetch('/api/history', {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const data = await res.json();
+        const tbody = document.getElementById('historyTbody');
+
+        if (!data.history || data.history.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: var(--text-muted);">No scan history recorded.</td></tr>';
+          return;
+        }
+
+        tbody.innerHTML = data.history.map(row => `
+          <tr>
+            <td>${row.created_at}</td>
+            <td><img src="/${row.image_path.replace(/^\/+/, '')}" class="thumb-img" alt="Scan Thumb"></td>
+            <td>${row.crop}</td>
+            <td>${row.disease}</td>
+            <td>${row.confidence.toFixed(2)}%</td>
+            <td>
+              <button onclick="downloadPdfById(${row.id})" style="background: #e8f5e9; color: #1b5e20; border: 1px solid #a5d6a7; padding: 4px 10px; border-radius: 4px; font-weight: 700; cursor: pointer;">
+                📄 PDF
+              </button>
+            </td>
+          </tr>
+        `).join('');
+      } catch (err) {
+        document.getElementById('historyTbody').innerHTML = '<tr><td colspan="6">Error loading history.</td></tr>';
+      }
+    }
+
+    // PDF Download Helpers
+    let currentPredictionId = null;
+
+    function downloadPdfById(predId) {
+      const token = getToken();
+      if (!token) {
+        openAuthModal('login');
+        return;
+      }
+      fetch(`/api/prediction/${predId}/pdf`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      })
+      .then(res => {
+        if (!res.ok) throw new Error('Failed to generate PDF report.');
+        return res.blob();
+      })
+      .then(blob => {
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `crop_disease_report_${predId}.pdf`;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+      })
+      .catch(err => alert(err.message));
+    }
+
+    function downloadPdfReport() {
+      if (currentPredictionId) {
+        downloadPdfById(currentPredictionId);
+      }
+    }
+
+    // Load Dashboard
+    async function loadDashboard() {
+      const token = getToken();
+      const notice = document.getElementById('dashAuthNotice');
+      const content = document.getElementById('dashContent');
+
+      if (!token) {
+        notice.style.display = 'block';
+        content.style.display = 'none';
+        return;
+      }
+
+      notice.style.display = 'none';
+      content.style.display = 'block';
+
+      try {
+        const res = await fetch('/api/statistics', {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const data = await res.json();
+        const stats = data.statistics;
+
+        // Animated Count-Up Numerals (Step 3B)
+        animateCountUp('statTotalScans', stats.total_scans);
+        animateCountUp('statAvgConf', stats.avg_confidence, true);
+        document.getElementById('statTopDisease').innerText = stats.top_disease;
+
+        // Render Chart.js Donut & Bar Charts (Step 3B)
+        renderDashboardCharts(stats.crop_counts);
+
+      } catch (err) {
+        console.error("Dashboard error:", err);
+      }
+    }
+
+    // Chart.js Micro-Interaction Rendering (Step 3B)
+    let donutChartInstance = null;
+    let barChartInstance = null;
+
+    function renderDashboardCharts(cropCounts) {
+      const labels = Object.keys(cropCounts || {});
+      const dataValues = Object.values(cropCounts || {});
+
+      if (labels.length === 0) return;
+
+      const colors = ['#1B4332', '#2D6A4F', '#40916C', '#52B788', '#74C69D', '#95D5B2', '#D8F3DC'];
+
+      // Donut Chart
+      const donutCanvas = document.getElementById('cropDonutChart');
+      if (donutCanvas && window.Chart) {
+        const donutCtx = donutCanvas.getContext('2d');
+        if (donutChartInstance) donutChartInstance.destroy();
+        donutChartInstance = new Chart(donutCtx, {
+          type: 'doughnut',
+          data: {
+            labels: labels,
+            datasets: [{
+              data: dataValues,
+              backgroundColor: colors.slice(0, labels.length),
+              borderWidth: 2,
+              borderColor: '#ffffff'
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: { position: 'right', labels: { font: { family: 'Inter', size: 11 } } }
+            }
+          }
+        });
+      }
+
+      // Bar Chart
+      const barCanvas = document.getElementById('diseaseBarChart');
+      if (barCanvas && window.Chart) {
+        const barCtx = barCanvas.getContext('2d');
+        if (barChartInstance) barChartInstance.destroy();
+        barChartInstance = new Chart(barCtx, {
+          type: 'bar',
+          data: {
+            labels: labels,
+            datasets: [{
+              label: 'Scans',
+              data: dataValues,
+              backgroundColor: '#2D6A4F',
+              borderRadius: 6
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: {
+              y: { beginAtZero: true, ticks: { stepSize: 1 } },
+              x: { ticks: { font: { family: 'Inter', size: 11 } } }
+            }
+          }
+        });
+      }
+    }
+
+    // Initialize UI
+    updateAuthUI();
+  </script>
+</body>
+</html>

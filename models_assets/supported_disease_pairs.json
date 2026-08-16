@@ -1,0 +1,2040 @@
+[
+  {
+    "crop": "tomato",
+    "has_healthy": true,
+    "num_diseases": 17,
+    "total_imgs": 37638,
+    "min_imgs": 104,
+    "max_imgs": 5580,
+    "imbalance_ratio": 53.65384615384615,
+    "imbalance_flag": true,
+    "diseases": [
+      {
+        "disease": "yellow_leaf_curl_virus",
+        "pair_key": "tomato_yellow_leaf_curl_virus",
+        "train_cnt": 4464,
+        "test_cnt": 1116,
+        "tot_cnt": 5580
+      },
+      {
+        "disease": "septoria_leaf_spot",
+        "pair_key": "tomato_septoria_leaf_spot",
+        "train_cnt": 4456,
+        "test_cnt": 1114,
+        "tot_cnt": 5570
+      },
+      {
+        "disease": "healthy",
+        "pair_key": "tomato_healthy",
+        "train_cnt": 2868,
+        "test_cnt": 718,
+        "tot_cnt": 3586
+      },
+      {
+        "disease": "late_blight",
+        "pair_key": "tomato_late_blight",
+        "train_cnt": 2644,
+        "test_cnt": 661,
+        "tot_cnt": 3305
+      },
+      {
+        "disease": "bacterial_spot",
+        "pair_key": "tomato_bacterial_spot",
+        "train_cnt": 2511,
+        "test_cnt": 628,
+        "tot_cnt": 3139
+      },
+      {
+        "disease": "mosaic_virus",
+        "pair_key": "tomato_mosaic_virus",
+        "train_cnt": 2188,
+        "test_cnt": 548,
+        "tot_cnt": 2736
+      },
+      {
+        "disease": "leaf_mold",
+        "pair_key": "tomato_leaf_mold",
+        "train_cnt": 2047,
+        "test_cnt": 512,
+        "tot_cnt": 2559
+      },
+      {
+        "disease": "early_blight",
+        "pair_key": "tomato_early_blight",
+        "train_cnt": 1884,
+        "test_cnt": 472,
+        "tot_cnt": 2356
+      },
+      {
+        "disease": "target_spot",
+        "pair_key": "tomato_target_spot",
+        "train_cnt": 1697,
+        "test_cnt": 425,
+        "tot_cnt": 2122
+      },
+      {
+        "disease": "spider_mites",
+        "pair_key": "tomato_spider_mites",
+        "train_cnt": 1612,
+        "test_cnt": 404,
+        "tot_cnt": 2016
+      },
+      {
+        "disease": "leaf_blight",
+        "pair_key": "tomato_leaf_blight",
+        "train_cnt": 1004,
+        "test_cnt": 251,
+        "tot_cnt": 1255
+      },
+      {
+        "disease": "powdery_mildew",
+        "pair_key": "tomato_powdery_mildew",
+        "train_cnt": 810,
+        "test_cnt": 203,
+        "tot_cnt": 1013
+      },
+      {
+        "disease": "brown_spot",
+        "pair_key": "tomato_brown_spot",
+        "train_cnt": 609,
+        "test_cnt": 153,
+        "tot_cnt": 762
+      },
+      {
+        "disease": "verticulium_wilt",
+        "pair_key": "tomato_verticulium_wilt",
+        "train_cnt": 571,
+        "test_cnt": 143,
+        "tot_cnt": 714
+      },
+      {
+        "disease": "curl",
+        "pair_key": "tomato_curl",
+        "train_cnt": 369,
+        "test_cnt": 93,
+        "tot_cnt": 462
+      },
+      {
+        "disease": "blight_leaf",
+        "pair_key": "tomato_blight_leaf",
+        "train_cnt": 287,
+        "test_cnt": 72,
+        "tot_cnt": 359
+      },
+      {
+        "disease": "bacterial_leaf_spot",
+        "pair_key": "tomato_bacterial_leaf_spot",
+        "train_cnt": 83,
+        "test_cnt": 21,
+        "tot_cnt": 104
+      }
+    ]
+  },
+  {
+    "crop": "cassava",
+    "has_healthy": true,
+    "num_diseases": 9,
+    "total_imgs": 37220,
+    "min_imgs": 414,
+    "max_imgs": 17995,
+    "imbalance_ratio": 43.466183574879224,
+    "imbalance_flag": true,
+    "diseases": [
+      {
+        "disease": "mosaic",
+        "pair_key": "cassava_mosaic",
+        "train_cnt": 14395,
+        "test_cnt": 3600,
+        "tot_cnt": 17995
+      },
+      {
+        "disease": "healthy",
+        "pair_key": "cassava_healthy",
+        "train_cnt": 3736,
+        "test_cnt": 934,
+        "tot_cnt": 4670
+      },
+      {
+        "disease": "bacterial_blight",
+        "pair_key": "cassava_bacterial_blight",
+        "train_cnt": 3133,
+        "test_cnt": 784,
+        "tot_cnt": 3917
+      },
+      {
+        "disease": "brown_streak_disease",
+        "pair_key": "cassava_brown_streak_disease",
+        "train_cnt": 3114,
+        "test_cnt": 779,
+        "tot_cnt": 3893
+      },
+      {
+        "disease": "green_mottle",
+        "pair_key": "cassava_green_mottle",
+        "train_cnt": 1805,
+        "test_cnt": 452,
+        "tot_cnt": 2257
+      },
+      {
+        "disease": "green_mite",
+        "pair_key": "cassava_green_mite",
+        "train_cnt": 1649,
+        "test_cnt": 413,
+        "tot_cnt": 2062
+      },
+      {
+        "disease": "brown_spot",
+        "pair_key": "cassava_brown_spot",
+        "train_cnt": 1160,
+        "test_cnt": 291,
+        "tot_cnt": 1451
+      },
+      {
+        "disease": "brown_leaf_spot",
+        "pair_key": "cassava_brown_leaf_spot",
+        "train_cnt": 448,
+        "test_cnt": 113,
+        "tot_cnt": 561
+      },
+      {
+        "disease": "red_mite",
+        "pair_key": "cassava_red_mite",
+        "train_cnt": 331,
+        "test_cnt": 83,
+        "tot_cnt": 414
+      }
+    ]
+  },
+  {
+    "crop": "apple",
+    "has_healthy": true,
+    "num_diseases": 17,
+    "total_imgs": 32749,
+    "min_imgs": 162,
+    "max_imgs": 7499,
+    "imbalance_ratio": 46.29012345679013,
+    "imbalance_flag": true,
+    "diseases": [
+      {
+        "disease": "healthy",
+        "pair_key": "apple_healthy",
+        "train_cnt": 5999,
+        "test_cnt": 1500,
+        "tot_cnt": 7499
+      },
+      {
+        "disease": "rust",
+        "pair_key": "apple_rust",
+        "train_cnt": 3746,
+        "test_cnt": 938,
+        "tot_cnt": 4684
+      },
+      {
+        "disease": "frog_eye_leaf_spot",
+        "pair_key": "apple_frog_eye_leaf_spot",
+        "train_cnt": 2544,
+        "test_cnt": 637,
+        "tot_cnt": 3181
+      },
+      {
+        "disease": "brown_spot",
+        "pair_key": "apple_brown_spot",
+        "train_cnt": 2010,
+        "test_cnt": 503,
+        "tot_cnt": 2513
+      },
+      {
+        "disease": "alternaria_blotch",
+        "pair_key": "apple_alternaria_blotch",
+        "train_cnt": 1912,
+        "test_cnt": 479,
+        "tot_cnt": 2391
+      },
+      {
+        "disease": "mosaic_virus",
+        "pair_key": "apple_mosaic_virus",
+        "train_cnt": 1896,
+        "test_cnt": 474,
+        "tot_cnt": 2370
+      },
+      {
+        "disease": "grey_spot",
+        "pair_key": "apple_grey_spot",
+        "train_cnt": 1826,
+        "test_cnt": 457,
+        "tot_cnt": 2283
+      },
+      {
+        "disease": "marssonina_blotch",
+        "pair_key": "apple_marssonina_blotch",
+        "train_cnt": 1686,
+        "test_cnt": 422,
+        "tot_cnt": 2108
+      },
+      {
+        "disease": "scab",
+        "pair_key": "apple_scab",
+        "train_cnt": 1328,
+        "test_cnt": 333,
+        "tot_cnt": 1661
+      },
+      {
+        "disease": "powdery_mildew",
+        "pair_key": "apple_powdery_mildew",
+        "train_cnt": 947,
+        "test_cnt": 237,
+        "tot_cnt": 1184
+      },
+      {
+        "disease": "alternaria_leaf_spot",
+        "pair_key": "apple_alternaria_leaf_spot",
+        "train_cnt": 644,
+        "test_cnt": 161,
+        "tot_cnt": 805
+      },
+      {
+        "disease": "black_rot",
+        "pair_key": "apple_black_rot",
+        "train_cnt": 561,
+        "test_cnt": 141,
+        "tot_cnt": 702
+      },
+      {
+        "disease": "eriosoma_lanigerum",
+        "pair_key": "apple_eriosoma_lanigerum",
+        "train_cnt": 292,
+        "test_cnt": 74,
+        "tot_cnt": 366
+      },
+      {
+        "disease": "cedar_apple_rust",
+        "pair_key": "apple_cedar_apple_rust",
+        "train_cnt": 285,
+        "test_cnt": 72,
+        "tot_cnt": 357
+      },
+      {
+        "disease": "monillia_laxa",
+        "pair_key": "apple_monillia_laxa",
+        "train_cnt": 204,
+        "test_cnt": 51,
+        "tot_cnt": 255
+      },
+      {
+        "disease": "venturia_inaequalis",
+        "pair_key": "apple_venturia_inaequalis",
+        "train_cnt": 182,
+        "test_cnt": 46,
+        "tot_cnt": 228
+      },
+      {
+        "disease": "aphis_spp",
+        "pair_key": "apple_aphis_spp",
+        "train_cnt": 129,
+        "test_cnt": 33,
+        "tot_cnt": 162
+      }
+    ]
+  },
+  {
+    "crop": "corn",
+    "has_healthy": true,
+    "num_diseases": 12,
+    "total_imgs": 26630,
+    "min_imgs": 126,
+    "max_imgs": 7161,
+    "imbalance_ratio": 56.833333333333336,
+    "imbalance_flag": true,
+    "diseases": [
+      {
+        "disease": "streak_virus",
+        "pair_key": "corn_streak_virus",
+        "train_cnt": 5728,
+        "test_cnt": 1433,
+        "tot_cnt": 7161
+      },
+      {
+        "disease": "healthy",
+        "pair_key": "corn_healthy",
+        "train_cnt": 5266,
+        "test_cnt": 1317,
+        "tot_cnt": 6583
+      },
+      {
+        "disease": "lethal_necrosis",
+        "pair_key": "corn_lethal_necrosis",
+        "train_cnt": 3183,
+        "test_cnt": 796,
+        "tot_cnt": 3979
+      },
+      {
+        "disease": "northern_leaf_blight",
+        "pair_key": "corn_northern_leaf_blight",
+        "train_cnt": 2323,
+        "test_cnt": 581,
+        "tot_cnt": 2904
+      },
+      {
+        "disease": "leaf_blight",
+        "pair_key": "corn_leaf_blight",
+        "train_cnt": 1642,
+        "test_cnt": 411,
+        "tot_cnt": 2053
+      },
+      {
+        "disease": "spot",
+        "pair_key": "corn_spot",
+        "train_cnt": 1239,
+        "test_cnt": 311,
+        "tot_cnt": 1550
+      },
+      {
+        "disease": "rust",
+        "pair_key": "corn_rust",
+        "train_cnt": 1125,
+        "test_cnt": 283,
+        "tot_cnt": 1408
+      },
+      {
+        "disease": "yellowing",
+        "pair_key": "corn_yellowing",
+        "train_cnt": 242,
+        "test_cnt": 61,
+        "tot_cnt": 303
+      },
+      {
+        "disease": "smut",
+        "pair_key": "corn_smut",
+        "train_cnt": 172,
+        "test_cnt": 43,
+        "tot_cnt": 215
+      },
+      {
+        "disease": "streak",
+        "pair_key": "corn_streak",
+        "train_cnt": 141,
+        "test_cnt": 36,
+        "tot_cnt": 177
+      },
+      {
+        "disease": "brown_spot",
+        "pair_key": "corn_brown_spot",
+        "train_cnt": 136,
+        "test_cnt": 35,
+        "tot_cnt": 171
+      },
+      {
+        "disease": "gray_leaf_spot",
+        "pair_key": "corn_gray_leaf_spot",
+        "train_cnt": 100,
+        "test_cnt": 26,
+        "tot_cnt": 126
+      }
+    ]
+  },
+  {
+    "crop": "paddy",
+    "has_healthy": true,
+    "num_diseases": 14,
+    "total_imgs": 19063,
+    "min_imgs": 123,
+    "max_imgs": 3055,
+    "imbalance_ratio": 24.83739837398374,
+    "imbalance_flag": true,
+    "diseases": [
+      {
+        "disease": "blast",
+        "pair_key": "paddy_blast",
+        "train_cnt": 2443,
+        "test_cnt": 612,
+        "tot_cnt": 3055
+      },
+      {
+        "disease": "healthy",
+        "pair_key": "paddy_healthy",
+        "train_cnt": 2248,
+        "test_cnt": 563,
+        "tot_cnt": 2811
+      },
+      {
+        "disease": "hispa",
+        "pair_key": "paddy_hispa",
+        "train_cnt": 1958,
+        "test_cnt": 490,
+        "tot_cnt": 2448
+      },
+      {
+        "disease": "tungro",
+        "pair_key": "paddy_tungro",
+        "train_cnt": 1933,
+        "test_cnt": 485,
+        "tot_cnt": 2418
+      },
+      {
+        "disease": "brown_spot",
+        "pair_key": "paddy_brown_spot",
+        "train_cnt": 1764,
+        "test_cnt": 444,
+        "tot_cnt": 2208
+      },
+      {
+        "disease": "white_stem_borer",
+        "pair_key": "paddy_white_stem_borer",
+        "train_cnt": 900,
+        "test_cnt": 226,
+        "tot_cnt": 1126
+      },
+      {
+        "disease": "bacterial_blight",
+        "pair_key": "paddy_bacterial_blight",
+        "train_cnt": 824,
+        "test_cnt": 208,
+        "tot_cnt": 1032
+      },
+      {
+        "disease": "leaf_roller",
+        "pair_key": "paddy_leaf_roller",
+        "train_cnt": 798,
+        "test_cnt": 200,
+        "tot_cnt": 998
+      },
+      {
+        "disease": "downy_mildew",
+        "pair_key": "paddy_downy_mildew",
+        "train_cnt": 626,
+        "test_cnt": 157,
+        "tot_cnt": 783
+      },
+      {
+        "disease": "yellow_stem_borer",
+        "pair_key": "paddy_yellow_stem_borer",
+        "train_cnt": 576,
+        "test_cnt": 144,
+        "tot_cnt": 720
+      },
+      {
+        "disease": "black_stem_borer",
+        "pair_key": "paddy_black_stem_borer",
+        "train_cnt": 394,
+        "test_cnt": 99,
+        "tot_cnt": 493
+      },
+      {
+        "disease": "bacterial_panicle_blight",
+        "pair_key": "paddy_bacterial_panicle_blight",
+        "train_cnt": 352,
+        "test_cnt": 89,
+        "tot_cnt": 441
+      },
+      {
+        "disease": "bacterial_leaf_streak",
+        "pair_key": "paddy_bacterial_leaf_streak",
+        "train_cnt": 325,
+        "test_cnt": 82,
+        "tot_cnt": 407
+      },
+      {
+        "disease": "leafblast",
+        "pair_key": "paddy_leafblast",
+        "train_cnt": 98,
+        "test_cnt": 25,
+        "tot_cnt": 123
+      }
+    ]
+  },
+  {
+    "crop": "soybean",
+    "has_healthy": true,
+    "num_diseases": 7,
+    "total_imgs": 11818,
+    "min_imgs": 108,
+    "max_imgs": 5902,
+    "imbalance_ratio": 54.648148148148145,
+    "imbalance_flag": true,
+    "diseases": [
+      {
+        "disease": "healthy",
+        "pair_key": "soybean_healthy",
+        "train_cnt": 4721,
+        "test_cnt": 1181,
+        "tot_cnt": 5902
+      },
+      {
+        "disease": "caterpillar",
+        "pair_key": "soybean_caterpillar",
+        "train_cnt": 2550,
+        "test_cnt": 638,
+        "tot_cnt": 3188
+      },
+      {
+        "disease": "diabrotica_speciosa",
+        "pair_key": "soybean_diabrotica_speciosa",
+        "train_cnt": 1758,
+        "test_cnt": 440,
+        "tot_cnt": 2198
+      },
+      {
+        "disease": "frog_eye_leaf_spot",
+        "pair_key": "soybean_frog_eye_leaf_spot",
+        "train_cnt": 153,
+        "test_cnt": 39,
+        "tot_cnt": 192
+      },
+      {
+        "disease": "downy_mildew",
+        "pair_key": "soybean_downy_mildew",
+        "train_cnt": 96,
+        "test_cnt": 25,
+        "tot_cnt": 121
+      },
+      {
+        "disease": "mosaic",
+        "pair_key": "soybean_mosaic",
+        "train_cnt": 87,
+        "test_cnt": 22,
+        "tot_cnt": 109
+      },
+      {
+        "disease": "rust",
+        "pair_key": "soybean_rust",
+        "train_cnt": 86,
+        "test_cnt": 22,
+        "tot_cnt": 108
+      }
+    ]
+  },
+  {
+    "crop": "grape",
+    "has_healthy": true,
+    "num_diseases": 5,
+    "total_imgs": 6457,
+    "min_imgs": 278,
+    "max_imgs": 2271,
+    "imbalance_ratio": 8.16906474820144,
+    "imbalance_flag": false,
+    "diseases": [
+      {
+        "disease": "esca",
+        "pair_key": "grape_esca",
+        "train_cnt": 1816,
+        "test_cnt": 455,
+        "tot_cnt": 2271
+      },
+      {
+        "disease": "healthy",
+        "pair_key": "grape_healthy",
+        "train_cnt": 1182,
+        "test_cnt": 296,
+        "tot_cnt": 1478
+      },
+      {
+        "disease": "black_rot",
+        "pair_key": "grape_black_rot",
+        "train_cnt": 1083,
+        "test_cnt": 271,
+        "tot_cnt": 1354
+      },
+      {
+        "disease": "leaf_blight",
+        "pair_key": "grape_leaf_blight",
+        "train_cnt": 860,
+        "test_cnt": 216,
+        "tot_cnt": 1076
+      },
+      {
+        "disease": "downy_mildew",
+        "pair_key": "grape_downy_mildew",
+        "train_cnt": 222,
+        "test_cnt": 56,
+        "tot_cnt": 278
+      }
+    ]
+  },
+  {
+    "crop": "potato",
+    "has_healthy": true,
+    "num_diseases": 3,
+    "total_imgs": 6415,
+    "min_imgs": 1163,
+    "max_imgs": 2729,
+    "imbalance_ratio": 2.346517626827171,
+    "imbalance_flag": false,
+    "diseases": [
+      {
+        "disease": "early_blight",
+        "pair_key": "potato_early_blight",
+        "train_cnt": 2183,
+        "test_cnt": 546,
+        "tot_cnt": 2729
+      },
+      {
+        "disease": "late_blight",
+        "pair_key": "potato_late_blight",
+        "train_cnt": 2018,
+        "test_cnt": 505,
+        "tot_cnt": 2523
+      },
+      {
+        "disease": "healthy",
+        "pair_key": "potato_healthy",
+        "train_cnt": 930,
+        "test_cnt": 233,
+        "tot_cnt": 1163
+      }
+    ]
+  },
+  {
+    "crop": "citrus",
+    "has_healthy": false,
+    "num_diseases": 3,
+    "total_imgs": 6387,
+    "min_imgs": 106,
+    "max_imgs": 5765,
+    "imbalance_ratio": 54.386792452830186,
+    "imbalance_flag": true,
+    "diseases": [
+      {
+        "disease": "greening",
+        "pair_key": "citrus_greening",
+        "train_cnt": 4611,
+        "test_cnt": 1154,
+        "tot_cnt": 5765
+      },
+      {
+        "disease": "canker",
+        "pair_key": "citrus_canker",
+        "train_cnt": 412,
+        "test_cnt": 104,
+        "tot_cnt": 516
+      },
+      {
+        "disease": "black_spot",
+        "pair_key": "citrus_black_spot",
+        "train_cnt": 84,
+        "test_cnt": 22,
+        "tot_cnt": 106
+      }
+    ]
+  },
+  {
+    "crop": "sugarcane",
+    "has_healthy": true,
+    "num_diseases": 13,
+    "total_imgs": 5148,
+    "min_imgs": 100,
+    "max_imgs": 904,
+    "imbalance_ratio": 9.04,
+    "imbalance_flag": false,
+    "diseases": [
+      {
+        "disease": "yellowing",
+        "pair_key": "sugarcane_yellowing",
+        "train_cnt": 722,
+        "test_cnt": 182,
+        "tot_cnt": 904
+      },
+      {
+        "disease": "healthy",
+        "pair_key": "sugarcane_healthy",
+        "train_cnt": 517,
+        "test_cnt": 130,
+        "tot_cnt": 647
+      },
+      {
+        "disease": "brown_spot",
+        "pair_key": "sugarcane_brown_spot",
+        "train_cnt": 516,
+        "test_cnt": 130,
+        "tot_cnt": 646
+      },
+      {
+        "disease": "red_rot",
+        "pair_key": "sugarcane_red_rot",
+        "train_cnt": 404,
+        "test_cnt": 101,
+        "tot_cnt": 505
+      },
+      {
+        "disease": "sett_rot",
+        "pair_key": "sugarcane_sett_rot",
+        "train_cnt": 383,
+        "test_cnt": 96,
+        "tot_cnt": 479
+      },
+      {
+        "disease": "rust",
+        "pair_key": "sugarcane_rust",
+        "train_cnt": 353,
+        "test_cnt": 89,
+        "tot_cnt": 442
+      },
+      {
+        "disease": "mosaic",
+        "pair_key": "sugarcane_mosaic",
+        "train_cnt": 300,
+        "test_cnt": 76,
+        "tot_cnt": 376
+      },
+      {
+        "disease": "grassy_shoot",
+        "pair_key": "sugarcane_grassy_shoot",
+        "train_cnt": 240,
+        "test_cnt": 60,
+        "tot_cnt": 300
+      },
+      {
+        "disease": "viral",
+        "pair_key": "sugarcane_viral",
+        "train_cnt": 176,
+        "test_cnt": 45,
+        "tot_cnt": 221
+      },
+      {
+        "disease": "pokkah_boeng",
+        "pair_key": "sugarcane_pokkah_boeng",
+        "train_cnt": 166,
+        "test_cnt": 42,
+        "tot_cnt": 208
+      },
+      {
+        "disease": "banded_chlorosis",
+        "pair_key": "sugarcane_banded_chlorosis",
+        "train_cnt": 137,
+        "test_cnt": 35,
+        "tot_cnt": 172
+      },
+      {
+        "disease": "smut",
+        "pair_key": "sugarcane_smut",
+        "train_cnt": 118,
+        "test_cnt": 30,
+        "tot_cnt": 148
+      },
+      {
+        "disease": "brown_rust",
+        "pair_key": "sugarcane_brown_rust",
+        "train_cnt": 80,
+        "test_cnt": 20,
+        "tot_cnt": 100
+      }
+    ]
+  },
+  {
+    "crop": "peach",
+    "has_healthy": true,
+    "num_diseases": 6,
+    "total_imgs": 4047,
+    "min_imgs": 158,
+    "max_imgs": 2297,
+    "imbalance_ratio": 14.537974683544304,
+    "imbalance_flag": true,
+    "diseases": [
+      {
+        "disease": "bacterial_spot",
+        "pair_key": "peach_bacterial_spot",
+        "train_cnt": 1837,
+        "test_cnt": 460,
+        "tot_cnt": 2297
+      },
+      {
+        "disease": "healthy",
+        "pair_key": "peach_healthy",
+        "train_cnt": 537,
+        "test_cnt": 135,
+        "tot_cnt": 672
+      },
+      {
+        "disease": "parthenolecanium_corni",
+        "pair_key": "peach_parthenolecanium_corni",
+        "train_cnt": 340,
+        "test_cnt": 86,
+        "tot_cnt": 426
+      },
+      {
+        "disease": "monillia_laxa",
+        "pair_key": "peach_monillia_laxa",
+        "train_cnt": 250,
+        "test_cnt": 63,
+        "tot_cnt": 313
+      },
+      {
+        "disease": "curl",
+        "pair_key": "peach_curl",
+        "train_cnt": 144,
+        "test_cnt": 37,
+        "tot_cnt": 181
+      },
+      {
+        "disease": "brown_rot",
+        "pair_key": "peach_brown_rot",
+        "train_cnt": 126,
+        "test_cnt": 32,
+        "tot_cnt": 158
+      }
+    ]
+  },
+  {
+    "crop": "wheat",
+    "has_healthy": true,
+    "num_diseases": 9,
+    "total_imgs": 3884,
+    "min_imgs": 113,
+    "max_imgs": 1127,
+    "imbalance_ratio": 9.973451327433628,
+    "imbalance_flag": false,
+    "diseases": [
+      {
+        "disease": "rust",
+        "pair_key": "wheat_rust",
+        "train_cnt": 901,
+        "test_cnt": 226,
+        "tot_cnt": 1127
+      },
+      {
+        "disease": "healthy",
+        "pair_key": "wheat_healthy",
+        "train_cnt": 543,
+        "test_cnt": 136,
+        "tot_cnt": 679
+      },
+      {
+        "disease": "stripe_rust",
+        "pair_key": "wheat_stripe_rust",
+        "train_cnt": 496,
+        "test_cnt": 125,
+        "tot_cnt": 621
+      },
+      {
+        "disease": "loose_smut",
+        "pair_key": "wheat_loose_smut",
+        "train_cnt": 320,
+        "test_cnt": 80,
+        "tot_cnt": 400
+      },
+      {
+        "disease": "head_scab",
+        "pair_key": "wheat_head_scab",
+        "train_cnt": 208,
+        "test_cnt": 52,
+        "tot_cnt": 260
+      },
+      {
+        "disease": "powdery_mildew",
+        "pair_key": "wheat_powdery_mildew",
+        "train_cnt": 200,
+        "test_cnt": 51,
+        "tot_cnt": 251
+      },
+      {
+        "disease": "root_rot",
+        "pair_key": "wheat_root_rot",
+        "train_cnt": 197,
+        "test_cnt": 50,
+        "tot_cnt": 247
+      },
+      {
+        "disease": "septoria_blotch",
+        "pair_key": "wheat_septoria_blotch",
+        "train_cnt": 148,
+        "test_cnt": 38,
+        "tot_cnt": 186
+      },
+      {
+        "disease": "bacterial_leaf_streak",
+        "pair_key": "wheat_bacterial_leaf_streak",
+        "train_cnt": 90,
+        "test_cnt": 23,
+        "tot_cnt": 113
+      }
+    ]
+  },
+  {
+    "crop": "coffee",
+    "has_healthy": true,
+    "num_diseases": 6,
+    "total_imgs": 3861,
+    "min_imgs": 147,
+    "max_imgs": 1531,
+    "imbalance_ratio": 10.414965986394558,
+    "imbalance_flag": true,
+    "diseases": [
+      {
+        "disease": "rust",
+        "pair_key": "coffee_rust",
+        "train_cnt": 1224,
+        "test_cnt": 307,
+        "tot_cnt": 1531
+      },
+      {
+        "disease": "healthy",
+        "pair_key": "coffee_healthy",
+        "train_cnt": 823,
+        "test_cnt": 206,
+        "tot_cnt": 1029
+      },
+      {
+        "disease": "miner",
+        "pair_key": "coffee_miner",
+        "train_cnt": 514,
+        "test_cnt": 130,
+        "tot_cnt": 644
+      },
+      {
+        "disease": "phoma",
+        "pair_key": "coffee_phoma",
+        "train_cnt": 278,
+        "test_cnt": 70,
+        "tot_cnt": 348
+      },
+      {
+        "disease": "spider_mites",
+        "pair_key": "coffee_spider_mites",
+        "train_cnt": 129,
+        "test_cnt": 33,
+        "tot_cnt": 162
+      },
+      {
+        "disease": "cercospora",
+        "pair_key": "coffee_cercospora",
+        "train_cnt": 117,
+        "test_cnt": 30,
+        "tot_cnt": 147
+      }
+    ]
+  },
+  {
+    "crop": "mango",
+    "has_healthy": true,
+    "num_diseases": 8,
+    "total_imgs": 3723,
+    "min_imgs": 238,
+    "max_imgs": 536,
+    "imbalance_ratio": 2.2521008403361344,
+    "imbalance_flag": false,
+    "diseases": [
+      {
+        "disease": "healthy",
+        "pair_key": "mango_healthy",
+        "train_cnt": 428,
+        "test_cnt": 108,
+        "tot_cnt": 536
+      },
+      {
+        "disease": "sooty_mould",
+        "pair_key": "mango_sooty_mould",
+        "train_cnt": 399,
+        "test_cnt": 100,
+        "tot_cnt": 499
+      },
+      {
+        "disease": "powdery_mildew",
+        "pair_key": "mango_powdery_mildew",
+        "train_cnt": 397,
+        "test_cnt": 100,
+        "tot_cnt": 497
+      },
+      {
+        "disease": "bacterial_canker",
+        "pair_key": "mango_bacterial_canker",
+        "train_cnt": 396,
+        "test_cnt": 99,
+        "tot_cnt": 495
+      },
+      {
+        "disease": "gall_midge",
+        "pair_key": "mango_gall_midge",
+        "train_cnt": 394,
+        "test_cnt": 99,
+        "tot_cnt": 493
+      },
+      {
+        "disease": "die_back",
+        "pair_key": "mango_die_back",
+        "train_cnt": 392,
+        "test_cnt": 99,
+        "tot_cnt": 491
+      },
+      {
+        "disease": "anthracnose",
+        "pair_key": "mango_anthracnose",
+        "train_cnt": 379,
+        "test_cnt": 95,
+        "tot_cnt": 474
+      },
+      {
+        "disease": "cutting_weevil",
+        "pair_key": "mango_cutting_weevil",
+        "train_cnt": 190,
+        "test_cnt": 48,
+        "tot_cnt": 238
+      }
+    ]
+  },
+  {
+    "crop": "olive",
+    "has_healthy": true,
+    "num_diseases": 3,
+    "total_imgs": 3162,
+    "min_imgs": 853,
+    "max_imgs": 1443,
+    "imbalance_ratio": 1.6916764361078547,
+    "imbalance_flag": false,
+    "diseases": [
+      {
+        "disease": "peacock_spot",
+        "pair_key": "olive_peacock_spot",
+        "train_cnt": 1154,
+        "test_cnt": 289,
+        "tot_cnt": 1443
+      },
+      {
+        "disease": "aculus_olearius",
+        "pair_key": "olive_aculus_olearius",
+        "train_cnt": 692,
+        "test_cnt": 174,
+        "tot_cnt": 866
+      },
+      {
+        "disease": "healthy",
+        "pair_key": "olive_healthy",
+        "train_cnt": 682,
+        "test_cnt": 171,
+        "tot_cnt": 853
+      }
+    ]
+  },
+  {
+    "crop": "pear",
+    "has_healthy": false,
+    "num_diseases": 3,
+    "total_imgs": 3116,
+    "min_imgs": 215,
+    "max_imgs": 2020,
+    "imbalance_ratio": 9.395348837209303,
+    "imbalance_flag": false,
+    "diseases": [
+      {
+        "disease": "slug",
+        "pair_key": "pear_slug",
+        "train_cnt": 1616,
+        "test_cnt": 404,
+        "tot_cnt": 2020
+      },
+      {
+        "disease": "spot",
+        "pair_key": "pear_spot",
+        "train_cnt": 704,
+        "test_cnt": 177,
+        "tot_cnt": 881
+      },
+      {
+        "disease": "erwinia_amylovora",
+        "pair_key": "pear_erwinia_amylovora",
+        "train_cnt": 172,
+        "test_cnt": 43,
+        "tot_cnt": 215
+      }
+    ]
+  },
+  {
+    "crop": "peanut",
+    "has_healthy": true,
+    "num_diseases": 5,
+    "total_imgs": 3056,
+    "min_imgs": 226,
+    "max_imgs": 928,
+    "imbalance_ratio": 4.106194690265487,
+    "imbalance_flag": false,
+    "diseases": [
+      {
+        "disease": "healthy",
+        "pair_key": "peanut_healthy",
+        "train_cnt": 742,
+        "test_cnt": 186,
+        "tot_cnt": 928
+      },
+      {
+        "disease": "early_leaf_spot",
+        "pair_key": "peanut_early_leaf_spot",
+        "train_cnt": 707,
+        "test_cnt": 177,
+        "tot_cnt": 884
+      },
+      {
+        "disease": "late_leaf_spot",
+        "pair_key": "peanut_late_leaf_spot",
+        "train_cnt": 551,
+        "test_cnt": 138,
+        "tot_cnt": 689
+      },
+      {
+        "disease": "nutrition_deficiency",
+        "pair_key": "peanut_nutrition_deficiency",
+        "train_cnt": 263,
+        "test_cnt": 66,
+        "tot_cnt": 329
+      },
+      {
+        "disease": "rust",
+        "pair_key": "peanut_rust",
+        "train_cnt": 180,
+        "test_cnt": 46,
+        "tot_cnt": 226
+      }
+    ]
+  },
+  {
+    "crop": "pepper_bell",
+    "has_healthy": true,
+    "num_diseases": 2,
+    "total_imgs": 2579,
+    "min_imgs": 1097,
+    "max_imgs": 1482,
+    "imbalance_ratio": 1.3509571558796718,
+    "imbalance_flag": false,
+    "diseases": [
+      {
+        "disease": "healthy",
+        "pair_key": "pepper_bell_healthy",
+        "train_cnt": 1185,
+        "test_cnt": 297,
+        "tot_cnt": 1482
+      },
+      {
+        "disease": "bacterial_spot",
+        "pair_key": "pepper_bell_bacterial_spot",
+        "train_cnt": 877,
+        "test_cnt": 220,
+        "tot_cnt": 1097
+      }
+    ]
+  },
+  {
+    "crop": "cherry",
+    "has_healthy": true,
+    "num_diseases": 4,
+    "total_imgs": 2564,
+    "min_imgs": 107,
+    "max_imgs": 1079,
+    "imbalance_ratio": 10.08411214953271,
+    "imbalance_flag": true,
+    "diseases": [
+      {
+        "disease": "powdery_mildew",
+        "pair_key": "cherry_powdery_mildew",
+        "train_cnt": 863,
+        "test_cnt": 216,
+        "tot_cnt": 1079
+      },
+      {
+        "disease": "healthy",
+        "pair_key": "cherry_healthy",
+        "train_cnt": 817,
+        "test_cnt": 205,
+        "tot_cnt": 1022
+      },
+      {
+        "disease": "aphis_spp",
+        "pair_key": "cherry_aphis_spp",
+        "train_cnt": 284,
+        "test_cnt": 72,
+        "tot_cnt": 356
+      },
+      {
+        "disease": "spot",
+        "pair_key": "cherry_spot",
+        "train_cnt": 85,
+        "test_cnt": 22,
+        "tot_cnt": 107
+      }
+    ]
+  },
+  {
+    "crop": "banana",
+    "has_healthy": true,
+    "num_diseases": 8,
+    "total_imgs": 2518,
+    "min_imgs": 135,
+    "max_imgs": 814,
+    "imbalance_ratio": 6.029629629629629,
+    "imbalance_flag": false,
+    "diseases": [
+      {
+        "disease": "xamthomonas",
+        "pair_key": "banana_xamthomonas",
+        "train_cnt": 651,
+        "test_cnt": 163,
+        "tot_cnt": 814
+      },
+      {
+        "disease": "sigatoka",
+        "pair_key": "banana_sigatoka",
+        "train_cnt": 376,
+        "test_cnt": 95,
+        "tot_cnt": 471
+      },
+      {
+        "disease": "segatoka",
+        "pair_key": "banana_segatoka",
+        "train_cnt": 256,
+        "test_cnt": 64,
+        "tot_cnt": 320
+      },
+      {
+        "disease": "healthy",
+        "pair_key": "banana_healthy",
+        "train_cnt": 196,
+        "test_cnt": 49,
+        "tot_cnt": 245
+      },
+      {
+        "disease": "cordana_leaf_spot",
+        "pair_key": "banana_cordana_leaf_spot",
+        "train_cnt": 169,
+        "test_cnt": 43,
+        "tot_cnt": 212
+      },
+      {
+        "disease": "pestalotiopsis",
+        "pair_key": "banana_pestalotiopsis",
+        "train_cnt": 136,
+        "test_cnt": 35,
+        "tot_cnt": 171
+      },
+      {
+        "disease": "black_leaf_streak",
+        "pair_key": "banana_black_leaf_streak",
+        "train_cnt": 120,
+        "test_cnt": 30,
+        "tot_cnt": 150
+      },
+      {
+        "disease": "bunchy_top",
+        "pair_key": "banana_bunchy_top",
+        "train_cnt": 108,
+        "test_cnt": 27,
+        "tot_cnt": 135
+      }
+    ]
+  },
+  {
+    "crop": "cotton",
+    "has_healthy": true,
+    "num_diseases": 4,
+    "total_imgs": 2480,
+    "min_imgs": 552,
+    "max_imgs": 723,
+    "imbalance_ratio": 1.309782608695652,
+    "imbalance_flag": false,
+    "diseases": [
+      {
+        "disease": "healthy",
+        "pair_key": "cotton_healthy",
+        "train_cnt": 578,
+        "test_cnt": 145,
+        "tot_cnt": 723
+      },
+      {
+        "disease": "bacterial_blight",
+        "pair_key": "cotton_bacterial_blight",
+        "train_cnt": 499,
+        "test_cnt": 125,
+        "tot_cnt": 624
+      },
+      {
+        "disease": "powdery_mildew",
+        "pair_key": "cotton_powdery_mildew",
+        "train_cnt": 464,
+        "test_cnt": 117,
+        "tot_cnt": 581
+      },
+      {
+        "disease": "target_spot",
+        "pair_key": "cotton_target_spot",
+        "train_cnt": 441,
+        "test_cnt": 111,
+        "tot_cnt": 552
+      }
+    ]
+  },
+  {
+    "crop": "papaya",
+    "has_healthy": true,
+    "num_diseases": 5,
+    "total_imgs": 1857,
+    "min_imgs": 197,
+    "max_imgs": 494,
+    "imbalance_ratio": 2.5076142131979697,
+    "imbalance_flag": false,
+    "diseases": [
+      {
+        "disease": "ring_spot",
+        "pair_key": "papaya_ring_spot",
+        "train_cnt": 395,
+        "test_cnt": 99,
+        "tot_cnt": 494
+      },
+      {
+        "disease": "bacterial_spot",
+        "pair_key": "papaya_bacterial_spot",
+        "train_cnt": 366,
+        "test_cnt": 92,
+        "tot_cnt": 458
+      },
+      {
+        "disease": "anthracnose",
+        "pair_key": "papaya_anthracnose",
+        "train_cnt": 284,
+        "test_cnt": 71,
+        "tot_cnt": 355
+      },
+      {
+        "disease": "curl",
+        "pair_key": "papaya_curl",
+        "train_cnt": 282,
+        "test_cnt": 71,
+        "tot_cnt": 353
+      },
+      {
+        "disease": "healthy",
+        "pair_key": "papaya_healthy",
+        "train_cnt": 157,
+        "test_cnt": 40,
+        "tot_cnt": 197
+      }
+    ]
+  },
+  {
+    "crop": "pumpkin",
+    "has_healthy": false,
+    "num_diseases": 1,
+    "total_imgs": 1835,
+    "min_imgs": 1835,
+    "max_imgs": 1835,
+    "imbalance_ratio": 1.0,
+    "imbalance_flag": false,
+    "diseases": [
+      {
+        "disease": "powdery_mildew",
+        "pair_key": "pumpkin_powdery_mildew",
+        "train_cnt": 1468,
+        "test_cnt": 367,
+        "tot_cnt": 1835
+      }
+    ]
+  },
+  {
+    "crop": "strawberry",
+    "has_healthy": true,
+    "num_diseases": 2,
+    "total_imgs": 1661,
+    "min_imgs": 517,
+    "max_imgs": 1144,
+    "imbalance_ratio": 2.2127659574468086,
+    "imbalance_flag": false,
+    "diseases": [
+      {
+        "disease": "scorch",
+        "pair_key": "strawberry_scorch",
+        "train_cnt": 915,
+        "test_cnt": 229,
+        "tot_cnt": 1144
+      },
+      {
+        "disease": "healthy",
+        "pair_key": "strawberry_healthy",
+        "train_cnt": 413,
+        "test_cnt": 104,
+        "tot_cnt": 517
+      }
+    ]
+  },
+  {
+    "crop": "blueberry",
+    "has_healthy": true,
+    "num_diseases": 1,
+    "total_imgs": 1607,
+    "min_imgs": 1607,
+    "max_imgs": 1607,
+    "imbalance_ratio": 1.0,
+    "imbalance_flag": false,
+    "diseases": [
+      {
+        "disease": "healthy",
+        "pair_key": "blueberry_healthy",
+        "train_cnt": 1285,
+        "test_cnt": 322,
+        "tot_cnt": 1607
+      }
+    ]
+  },
+  {
+    "crop": "cashew",
+    "has_healthy": false,
+    "num_diseases": 1,
+    "total_imgs": 1505,
+    "min_imgs": 1505,
+    "max_imgs": 1505,
+    "imbalance_ratio": 1.0,
+    "imbalance_flag": false,
+    "diseases": [
+      {
+        "disease": "red_rust",
+        "pair_key": "cashew_red_rust",
+        "train_cnt": 1204,
+        "test_cnt": 301,
+        "tot_cnt": 1505
+      }
+    ]
+  },
+  {
+    "crop": "bean",
+    "has_healthy": true,
+    "num_diseases": 4,
+    "total_imgs": 1408,
+    "min_imgs": 113,
+    "max_imgs": 436,
+    "imbalance_ratio": 3.8584070796460175,
+    "imbalance_flag": false,
+    "diseases": [
+      {
+        "disease": "bean_rust",
+        "pair_key": "bean_bean_rust",
+        "train_cnt": 348,
+        "test_cnt": 88,
+        "tot_cnt": 436
+      },
+      {
+        "disease": "angular_leaf_spot",
+        "pair_key": "bean_angular_leaf_spot",
+        "train_cnt": 345,
+        "test_cnt": 87,
+        "tot_cnt": 432
+      },
+      {
+        "disease": "healthy",
+        "pair_key": "bean_healthy",
+        "train_cnt": 341,
+        "test_cnt": 86,
+        "tot_cnt": 427
+      },
+      {
+        "disease": "rust",
+        "pair_key": "bean_rust",
+        "train_cnt": 90,
+        "test_cnt": 23,
+        "tot_cnt": 113
+      }
+    ]
+  },
+  {
+    "crop": "cucumber",
+    "has_healthy": true,
+    "num_diseases": 7,
+    "total_imgs": 1269,
+    "min_imgs": 159,
+    "max_imgs": 266,
+    "imbalance_ratio": 1.6729559748427674,
+    "imbalance_flag": false,
+    "diseases": [
+      {
+        "disease": "bacterial_wilt",
+        "pair_key": "cucumber_bacterial_wilt",
+        "train_cnt": 212,
+        "test_cnt": 54,
+        "tot_cnt": 266
+      },
+      {
+        "disease": "powdery_mildew",
+        "pair_key": "cucumber_powdery_mildew",
+        "train_cnt": 147,
+        "test_cnt": 37,
+        "tot_cnt": 184
+      },
+      {
+        "disease": "angular_leaf_spot",
+        "pair_key": "cucumber_angular_leaf_spot",
+        "train_cnt": 144,
+        "test_cnt": 36,
+        "tot_cnt": 180
+      },
+      {
+        "disease": "anthracnose",
+        "pair_key": "cucumber_anthracnose",
+        "train_cnt": 128,
+        "test_cnt": 32,
+        "tot_cnt": 160
+      },
+      {
+        "disease": "gummy_stem_blight",
+        "pair_key": "cucumber_gummy_stem_blight",
+        "train_cnt": 128,
+        "test_cnt": 32,
+        "tot_cnt": 160
+      },
+      {
+        "disease": "healthy",
+        "pair_key": "cucumber_healthy",
+        "train_cnt": 128,
+        "test_cnt": 32,
+        "tot_cnt": 160
+      },
+      {
+        "disease": "downy_mildew",
+        "pair_key": "cucumber_downy_mildew",
+        "train_cnt": 127,
+        "test_cnt": 32,
+        "tot_cnt": 159
+      }
+    ]
+  },
+  {
+    "crop": "palm",
+    "has_healthy": true,
+    "num_diseases": 3,
+    "total_imgs": 1235,
+    "min_imgs": 232,
+    "max_imgs": 553,
+    "imbalance_ratio": 2.3836206896551726,
+    "imbalance_flag": false,
+    "diseases": [
+      {
+        "disease": "white_scale",
+        "pair_key": "palm_white_scale",
+        "train_cnt": 442,
+        "test_cnt": 111,
+        "tot_cnt": 553
+      },
+      {
+        "disease": "healthy",
+        "pair_key": "palm_healthy",
+        "train_cnt": 360,
+        "test_cnt": 90,
+        "tot_cnt": 450
+      },
+      {
+        "disease": "brown_spot",
+        "pair_key": "palm_brown_spot",
+        "train_cnt": 185,
+        "test_cnt": 47,
+        "tot_cnt": 232
+      }
+    ]
+  },
+  {
+    "crop": "blackgram",
+    "has_healthy": true,
+    "num_diseases": 5,
+    "total_imgs": 1006,
+    "min_imgs": 151,
+    "max_imgs": 230,
+    "imbalance_ratio": 1.5231788079470199,
+    "imbalance_flag": false,
+    "diseases": [
+      {
+        "disease": "anthracnose",
+        "pair_key": "blackgram_anthracnose",
+        "train_cnt": 184,
+        "test_cnt": 46,
+        "tot_cnt": 230
+      },
+      {
+        "disease": "yellow_mosaic",
+        "pair_key": "blackgram_yellow_mosaic",
+        "train_cnt": 179,
+        "test_cnt": 45,
+        "tot_cnt": 224
+      },
+      {
+        "disease": "healthy",
+        "pair_key": "blackgram_healthy",
+        "train_cnt": 176,
+        "test_cnt": 45,
+        "tot_cnt": 221
+      },
+      {
+        "disease": "powdery_mildew",
+        "pair_key": "blackgram_powdery_mildew",
+        "train_cnt": 144,
+        "test_cnt": 36,
+        "tot_cnt": 180
+      },
+      {
+        "disease": "crinckle",
+        "pair_key": "blackgram_crinckle",
+        "train_cnt": 120,
+        "test_cnt": 31,
+        "tot_cnt": 151
+      }
+    ]
+  },
+  {
+    "crop": "rose",
+    "has_healthy": true,
+    "num_diseases": 3,
+    "total_imgs": 914,
+    "min_imgs": 199,
+    "max_imgs": 404,
+    "imbalance_ratio": 2.030150753768844,
+    "imbalance_flag": false,
+    "diseases": [
+      {
+        "disease": "healthy",
+        "pair_key": "rose_healthy",
+        "train_cnt": 323,
+        "test_cnt": 81,
+        "tot_cnt": 404
+      },
+      {
+        "disease": "black_spot",
+        "pair_key": "rose_black_spot",
+        "train_cnt": 248,
+        "test_cnt": 63,
+        "tot_cnt": 311
+      },
+      {
+        "disease": "downy_mildew",
+        "pair_key": "rose_downy_mildew",
+        "train_cnt": 159,
+        "test_cnt": 40,
+        "tot_cnt": 199
+      }
+    ]
+  },
+  {
+    "crop": "tea",
+    "has_healthy": false,
+    "num_diseases": 5,
+    "total_imgs": 645,
+    "min_imgs": 100,
+    "max_imgs": 179,
+    "imbalance_ratio": 1.79,
+    "imbalance_flag": false,
+    "diseases": [
+      {
+        "disease": "red_leaf_spot",
+        "pair_key": "tea_red_leaf_spot",
+        "train_cnt": 143,
+        "test_cnt": 36,
+        "tot_cnt": 179
+      },
+      {
+        "disease": "white_spot",
+        "pair_key": "tea_white_spot",
+        "train_cnt": 112,
+        "test_cnt": 28,
+        "tot_cnt": 140
+      },
+      {
+        "disease": "algal_leaf",
+        "pair_key": "tea_algal_leaf",
+        "train_cnt": 90,
+        "test_cnt": 23,
+        "tot_cnt": 113
+      },
+      {
+        "disease": "brown_blight",
+        "pair_key": "tea_brown_blight",
+        "train_cnt": 90,
+        "test_cnt": 23,
+        "tot_cnt": 113
+      },
+      {
+        "disease": "anthracnose",
+        "pair_key": "tea_anthracnose",
+        "train_cnt": 80,
+        "test_cnt": 20,
+        "tot_cnt": 100
+      }
+    ]
+  },
+  {
+    "crop": "guava",
+    "has_healthy": true,
+    "num_diseases": 3,
+    "total_imgs": 613,
+    "min_imgs": 100,
+    "max_imgs": 399,
+    "imbalance_ratio": 3.99,
+    "imbalance_flag": false,
+    "diseases": [
+      {
+        "disease": "healthy",
+        "pair_key": "guava_healthy",
+        "train_cnt": 319,
+        "test_cnt": 80,
+        "tot_cnt": 399
+      },
+      {
+        "disease": "phytophthora",
+        "pair_key": "guava_phytophthora",
+        "train_cnt": 91,
+        "test_cnt": 23,
+        "tot_cnt": 114
+      },
+      {
+        "disease": "scab",
+        "pair_key": "guava_scab",
+        "train_cnt": 80,
+        "test_cnt": 20,
+        "tot_cnt": 100
+      }
+    ]
+  },
+  {
+    "crop": "raspberry",
+    "has_healthy": true,
+    "num_diseases": 1,
+    "total_imgs": 411,
+    "min_imgs": 411,
+    "max_imgs": 411,
+    "imbalance_ratio": 1.0,
+    "imbalance_flag": false,
+    "diseases": [
+      {
+        "disease": "healthy",
+        "pair_key": "raspberry_healthy",
+        "train_cnt": 328,
+        "test_cnt": 83,
+        "tot_cnt": 411
+      }
+    ]
+  },
+  {
+    "crop": "sunflower",
+    "has_healthy": true,
+    "num_diseases": 3,
+    "total_imgs": 372,
+    "min_imgs": 100,
+    "max_imgs": 139,
+    "imbalance_ratio": 1.39,
+    "imbalance_flag": false,
+    "diseases": [
+      {
+        "disease": "leaf_scars",
+        "pair_key": "sunflower_leaf_scars",
+        "train_cnt": 111,
+        "test_cnt": 28,
+        "tot_cnt": 139
+      },
+      {
+        "disease": "healthy",
+        "pair_key": "sunflower_healthy",
+        "train_cnt": 106,
+        "test_cnt": 27,
+        "tot_cnt": 133
+      },
+      {
+        "disease": "downy_mildew",
+        "pair_key": "sunflower_downy_mildew",
+        "train_cnt": 80,
+        "test_cnt": 20,
+        "tot_cnt": 100
+      }
+    ]
+  },
+  {
+    "crop": "basil",
+    "has_healthy": true,
+    "num_diseases": 2,
+    "total_imgs": 324,
+    "min_imgs": 161,
+    "max_imgs": 163,
+    "imbalance_ratio": 1.0124223602484472,
+    "imbalance_flag": false,
+    "diseases": [
+      {
+        "disease": "downy_mildew",
+        "pair_key": "basil_downy_mildew",
+        "train_cnt": 130,
+        "test_cnt": 33,
+        "tot_cnt": 163
+      },
+      {
+        "disease": "healthy",
+        "pair_key": "basil_healthy",
+        "train_cnt": 128,
+        "test_cnt": 33,
+        "tot_cnt": 161
+      }
+    ]
+  },
+  {
+    "crop": "cauliflower",
+    "has_healthy": false,
+    "num_diseases": 2,
+    "total_imgs": 309,
+    "min_imgs": 146,
+    "max_imgs": 163,
+    "imbalance_ratio": 1.1164383561643836,
+    "imbalance_flag": false,
+    "diseases": [
+      {
+        "disease": "bacterial_spot",
+        "pair_key": "cauliflower_bacterial_spot",
+        "train_cnt": 130,
+        "test_cnt": 33,
+        "tot_cnt": 163
+      },
+      {
+        "disease": "downy_mildew",
+        "pair_key": "cauliflower_downy_mildew",
+        "train_cnt": 116,
+        "test_cnt": 30,
+        "tot_cnt": 146
+      }
+    ]
+  },
+  {
+    "crop": "coriander",
+    "has_healthy": true,
+    "num_diseases": 1,
+    "total_imgs": 260,
+    "min_imgs": 260,
+    "max_imgs": 260,
+    "imbalance_ratio": 1.0,
+    "imbalance_flag": false,
+    "diseases": [
+      {
+        "disease": "healthy",
+        "pair_key": "coriander_healthy",
+        "train_cnt": 208,
+        "test_cnt": 52,
+        "tot_cnt": 260
+      }
+    ]
+  },
+  {
+    "crop": "squash",
+    "has_healthy": false,
+    "num_diseases": 1,
+    "total_imgs": 186,
+    "min_imgs": 186,
+    "max_imgs": 186,
+    "imbalance_ratio": 1.0,
+    "imbalance_flag": false,
+    "diseases": [
+      {
+        "disease": "powdery_mildew",
+        "pair_key": "squash_powdery_mildew",
+        "train_cnt": 148,
+        "test_cnt": 38,
+        "tot_cnt": 186
+      }
+    ]
+  },
+  {
+    "crop": "walnut",
+    "has_healthy": false,
+    "num_diseases": 1,
+    "total_imgs": 179,
+    "min_imgs": 179,
+    "max_imgs": 179,
+    "imbalance_ratio": 1.0,
+    "imbalance_flag": false,
+    "diseases": [
+      {
+        "disease": "gnomonia_leptostyla",
+        "pair_key": "walnut_gnomonia_leptostyla",
+        "train_cnt": 143,
+        "test_cnt": 36,
+        "tot_cnt": 179
+      }
+    ]
+  },
+  {
+    "crop": "zucchini",
+    "has_healthy": false,
+    "num_diseases": 1,
+    "total_imgs": 169,
+    "min_imgs": 169,
+    "max_imgs": 169,
+    "imbalance_ratio": 1.0,
+    "imbalance_flag": false,
+    "diseases": [
+      {
+        "disease": "powdery_mildew",
+        "pair_key": "zucchini_powdery_mildew",
+        "train_cnt": 135,
+        "test_cnt": 34,
+        "tot_cnt": 169
+      }
+    ]
+  },
+  {
+    "crop": "apricot",
+    "has_healthy": false,
+    "num_diseases": 1,
+    "total_imgs": 120,
+    "min_imgs": 120,
+    "max_imgs": 120,
+    "imbalance_ratio": 1.0,
+    "imbalance_flag": false,
+    "diseases": [
+      {
+        "disease": "coryneum_blight",
+        "pair_key": "apricot_coryneum_blight",
+        "train_cnt": 96,
+        "test_cnt": 24,
+        "tot_cnt": 120
+      }
+    ]
+  },
+  {
+    "crop": "maple",
+    "has_healthy": false,
+    "num_diseases": 1,
+    "total_imgs": 113,
+    "min_imgs": 113,
+    "max_imgs": 113,
+    "imbalance_ratio": 1.0,
+    "imbalance_flag": false,
+    "diseases": [
+      {
+        "disease": "tar_spot",
+        "pair_key": "maple_tar_spot",
+        "train_cnt": 90,
+        "test_cnt": 23,
+        "tot_cnt": 113
+      }
+    ]
+  },
+  {
+    "crop": "garlic",
+    "has_healthy": false,
+    "num_diseases": 1,
+    "total_imgs": 105,
+    "min_imgs": 105,
+    "max_imgs": 105,
+    "imbalance_ratio": 1.0,
+    "imbalance_flag": false,
+    "diseases": [
+      {
+        "disease": "rust",
+        "pair_key": "garlic_rust",
+        "train_cnt": 84,
+        "test_cnt": 21,
+        "tot_cnt": 105
+      }
+    ]
+  },
+  {
+    "crop": "brassica",
+    "has_healthy": false,
+    "num_diseases": 1,
+    "total_imgs": 104,
+    "min_imgs": 104,
+    "max_imgs": 104,
+    "imbalance_ratio": 1.0,
+    "imbalance_flag": false,
+    "diseases": [
+      {
+        "disease": "black_rot",
+        "pair_key": "brassica_black_rot",
+        "train_cnt": 83,
+        "test_cnt": 21,
+        "tot_cnt": 104
+      }
+    ]
+  }
+]
