@@ -9,7 +9,7 @@ import jwt
 
 # Database path & Environment-driven JWT Configuration
 DB_PATH = os.getenv("DB_PATH", "database.db")
-SECRET_KEY = os.getenv("JWT_SECRET_KEY", os.getenv("SECRET_KEY", "multi_crop_plant_disease_secret_key_2026_dev"))
+SECRET_KEY = os.getenv("JWT_SECRET_KEY", os.getenv("SECRET_KEY", "multi_crop_plant_disease_secret_key_2026_super_secure_32bytes"))
 ALGORITHM = os.getenv("JWT_ALGORITHM", "HS256")
 TOKEN_EXPIRATION_SECONDS = int(os.getenv("TOKEN_EXPIRATION_SECONDS", str(86400 * 7)))  # 7 days
 
@@ -195,11 +195,16 @@ def authenticate_user(username_or_email: str, password: str) -> Optional[Dict[st
     return None
 
 
-def get_user_by_id(user_id: int) -> Optional[Dict[str, Any]]:
+def get_user_by_id(user_id: Any) -> Optional[Dict[str, Any]]:
     """Fetches user details by user ID."""
     conn = get_db()
     cursor = conn.cursor()
-    cursor.execute("SELECT id, username, email FROM users WHERE id = ?", (user_id,))
+    try:
+        uid = int(user_id)
+    except (ValueError, TypeError):
+        conn.close()
+        return None
+    cursor.execute("SELECT id, username, email FROM users WHERE id = ?", (uid,))
     user = cursor.fetchone()
     conn.close()
     if user:

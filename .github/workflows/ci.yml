@@ -28,7 +28,7 @@ jobs:
       - name: Run Pytest Integration & Unit Tests
         env:
           PYTHONPATH: .
-          JWT_SECRET_KEY: test_secret_key_ci_12345
+          JWT_SECRET_KEY: multi_crop_plant_disease_secret_key_2026_super_secure_32bytes
           DB_PATH: test_ci_database.db
         run: |
           pytest tests/ -v

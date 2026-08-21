@@ -14,20 +14,21 @@ from PIL import Image
 # Ensure project root is on sys.path
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
-# Ensure test environment uses isolated test database
+# Ensure test environment uses isolated test database and 32+ byte secret key
 os.environ["DB_PATH"] = "test_database.db"
-os.environ["JWT_SECRET_KEY"] = "test_secret_key_12345"
+os.environ["JWT_SECRET_KEY"] = "multi_crop_plant_disease_secret_key_2026_super_secure_32bytes"
 os.environ["CONFIDENCE_THRESHOLD"] = "50.0"
 
 import database
 database.DB_PATH = "test_database.db"
+database.SECRET_KEY = "multi_crop_plant_disease_secret_key_2026_super_secure_32bytes"
 database.init_db()
 
 import app as app_module
 from app import app
 from fastapi.testclient import TestClient
 
-# Mock DPD Engine for lightweight, fast CI testing without 328MB weight downloads
+# Mock DPD Engine for fast CI testing without 328MB weight downloads
 class MockDPDInferenceEngine:
     loaded = True
     def predict(self, image, disease_info=None):

@@ -91,13 +91,15 @@ load_assets()
 # Authentication Dependency Helpers
 # ---------------------------------------------------------
 def get_current_user(
+    request: Request,
     authorization: Optional[str] = Header(None)
 ) -> Optional[Dict[str, Any]]:
     """Extracts and validates current user from Authorization header if present."""
-    if not authorization:
+    auth_header = authorization or request.headers.get("authorization") or request.headers.get("Authorization")
+    if not auth_header:
         return None
 
-    scheme, _, token = authorization.partition(" ")
+    scheme, _, token = auth_header.partition(" ")
     if scheme.lower() != "bearer" or not token:
         return None
 
@@ -105,9 +107,12 @@ def get_current_user(
     if not payload or "sub" not in payload:
         return None
 
-    user_id = payload["sub"]
-    user = database.get_user_by_id(user_id)
-    return user
+    try:
+        user_id = int(payload["sub"])
+        user = database.get_user_by_id(user_id)
+        return user
+    except Exception:
+        return None
 
 
 def require_auth(
@@ -252,7 +257,7 @@ async def predict_crop_disease(
     # 2. Enforce Maximum File Size Limit (10MB)
     if len(image_bytes) > MAX_UPLOAD_SIZE:
         raise HTTPException(
-            status_code=status.HTTP_413_REQUEST_ENTITY_TOO_LARGE,
+            status_code=413,
             detail=f"File exceeds maximum allowed upload size of {MAX_UPLOAD_SIZE // (1024 * 1024)} MB."
         )
 
