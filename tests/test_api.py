@@ -5,12 +5,16 @@
 ======================================================================
 """
 
+import sys
 import os
 import io
 import pytest
 from PIL import Image
 
-# Ensure test environment uses test database
+# Ensure project root is on sys.path
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+
+# Ensure test environment uses isolated test database
 os.environ["DB_PATH"] = "test_database.db"
 os.environ["JWT_SECRET_KEY"] = "test_secret_key_12345"
 os.environ["CONFIDENCE_THRESHOLD"] = "50.0"
@@ -19,8 +23,35 @@ import database
 database.DB_PATH = "test_database.db"
 database.init_db()
 
+import app as app_module
 from app import app
 from fastapi.testclient import TestClient
+
+# Mock DPD Engine for lightweight, fast CI testing without 328MB weight downloads
+class MockDPDInferenceEngine:
+    loaded = True
+    def predict(self, image, disease_info=None):
+        return {
+            "crop": "Potato",
+            "disease": "Early Blight",
+            "confidence": 92.5,
+            "is_healthy": False,
+            "top_3_predictions": [
+                {"crop": "Potato", "disease": "Early Blight", "confidence": 92.5},
+                {"crop": "Tomato", "disease": "Early Blight", "confidence": 4.5},
+                {"crop": "Potato", "disease": "Late Blight", "confidence": 2.0}
+            ],
+            "advisory": {
+                "symptoms": "Dark brown concentric spots on lower foliage.",
+                "cause": "Alternaria solani fungal pathogen.",
+                "organic_treatment": "Apply Neem oil spray and Trichoderma harzianum.",
+                "chemical_treatment": "Apply Chlorothalonil or Mancozeb fungicide.",
+                "prevention": "Ensure 30cm crop spacing and drip irrigation."
+            }
+        }
+
+if app_module.dpd_engine is None or not getattr(app_module.dpd_engine, "loaded", False):
+    app_module.dpd_engine = MockDPDInferenceEngine()
 
 client = TestClient(app)
 
@@ -56,10 +87,10 @@ def test_health_liveness():
 
 def test_health_readiness():
     response = client.get("/health/ready")
-    assert response.status_code in [200, 503]
+    assert response.status_code == 200
     data = response.json()
-    assert "status" in data
-    assert "database_connected" in data
+    assert data["status"] == "ready"
+    assert data["database_connected"] is True
 
 
 # --------------------------------------------------------------------
@@ -80,7 +111,6 @@ def test_user_registration_and_case_insensitive_login():
     reg_data = reg_resp.json()
     assert reg_data["success"] is True
     assert "token" in reg_data
-    token = reg_data["token"]
 
     # Login with exact email
     login_resp_exact = client.post("/auth/login", json={

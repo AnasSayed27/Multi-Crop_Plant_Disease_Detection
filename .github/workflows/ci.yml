@@ -27,6 +27,7 @@ jobs:
 
       - name: Run Pytest Integration & Unit Tests
         env:
+          PYTHONPATH: .
           JWT_SECRET_KEY: test_secret_key_ci_12345
           DB_PATH: test_ci_database.db
         run: |
