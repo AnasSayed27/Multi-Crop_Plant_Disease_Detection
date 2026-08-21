@@ -68,8 +68,10 @@ def verify_password(plain_password: str, hashed_password: str) -> bool:
 
 
 def create_access_token(data: dict) -> str:
-    """Creates a JWT access token."""
+    """Creates a JWT access token with RFC 7519 string subject."""
     to_encode = data.copy()
+    if "sub" in to_encode:
+        to_encode["sub"] = str(to_encode["sub"])
     to_encode.update({"exp": int(time.time()) + TOKEN_EXPIRATION_SECONDS})
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
     return encoded_jwt

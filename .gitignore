@@ -4,6 +4,8 @@
 
 # ----- Python Runtime -----
 .venv/
+.venv_linux/
+.venv*/
 __pycache__/
 *.pyc
 *.pyo
