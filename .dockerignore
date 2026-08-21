@@ -1,0 +1,37 @@
+# Version Control & Git
+.git/
+.gitignore
+.github/
+
+# Python Cache & Environments
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.venv/
+env/
+venv/
+.pytest_cache/
+.coverage
+
+# Heavy Training Datasets & Legacy Weights (Download on demand or mount)
+Dataset/
+legacy_models/
+temp_plantvillage_repo/
+plantdoc_realworld/
+*.ipynb
+
+# Local Runtime Databases & Scans (Preserve privacy, use Docker volumes)
+database.db
+test_database.db
+*.db-wal
+*.db-shm
+uploads/*.jpg
+uploads/*.png
+uploads/*.jpeg
+
+# Documentation & IDE
+.idea/
+.vscode/
+*.swp
+docs/production_readiness_audit.md

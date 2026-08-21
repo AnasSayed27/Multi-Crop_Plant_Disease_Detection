@@ -2,12 +2,12 @@ import os
 import io
 import uuid
 import json
+import asyncio
 import numpy as np
 from PIL import Image
 from typing import Optional, List, Dict, Any
 
 from fastapi import FastAPI, File, UploadFile, Request, Depends, HTTPException, Header, status
-from fastapi import FastAPI, UploadFile, File, HTTPException, Depends, Request, Header
 from fastapi.responses import HTMLResponse, JSONResponse, Response
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
@@ -22,7 +22,8 @@ import dpd_model
 CLASS_NAMES_PATH = os.path.join("models_assets", "class_names.json")
 DISEASE_INFO_PATH = os.path.join("models_assets", "disease_info.json")
 UPLOADS_DIR = "uploads"
-CONFIDENCE_THRESHOLD = 50.0  # Configurable low-confidence threshold percentage
+CONFIDENCE_THRESHOLD = float(os.getenv("CONFIDENCE_THRESHOLD", "50.0"))  # Gating threshold
+MAX_UPLOAD_SIZE = int(os.getenv("MAX_UPLOAD_SIZE_MB", "10")) * 1024 * 1024  # 10 MB limit
 
 os.makedirs(UPLOADS_DIR, exist_ok=True)
 os.makedirs("models_assets", exist_ok=True)
@@ -36,7 +37,7 @@ app = FastAPI(
     description="Vision Transformer (DPD ViT-Base) multi-crop plant pathology diagnostic and advisory platform."
 )
 
-# Initialize SQLite schema
+# Initialize SQLite schema and indexes
 database.init_db()
 
 # Mount Static Files for Uploaded History Thumbnails
@@ -50,100 +51,155 @@ dpd_engine = None
 class_names: List[str] = []
 disease_info: Dict[str, Any] = {}
 
+
 def load_assets():
+    """Loads class names, disease metadata, and initializes Vision Transformer model."""
     global dpd_engine, class_names, disease_info
-    
-    # Load class names
+
+    # 1. Load Class Names
     if os.path.exists(CLASS_NAMES_PATH):
-        with open(CLASS_NAMES_PATH, "r", encoding="utf-8") as f:
-            class_names = json.load(f)
-        print(f"Loaded {len(class_names)} class names.")
-    else:
-        print("Warning: class_names.json not found.")
+        try:
+            with open(CLASS_NAMES_PATH, "r", encoding="utf-8") as f:
+                class_names = json.load(f)
+            print(f"Loaded {len(class_names)} class names from '{CLASS_NAMES_PATH}'.")
+        except Exception as e:
+            print(f"Error loading class names: {e}")
+            class_names = []
 
-    # Load disease advisory knowledge base
+    # 2. Load Disease Information & Advisory Knowledge Base
     if os.path.exists(DISEASE_INFO_PATH):
-        with open(DISEASE_INFO_PATH, "r", encoding="utf-8") as f:
-            disease_info = json.load(f)
-        print(f"Loaded disease advisory information for {len(disease_info)} classes.")
-    else:
-        print("Warning: disease_info.json not found.")
+        try:
+            with open(DISEASE_INFO_PATH, "r", encoding="utf-8") as f:
+                disease_info = json.load(f)
+            print(f"Loaded advisory details for {len(disease_info)} classes from '{DISEASE_INFO_PATH}'.")
+        except Exception as e:
+            print(f"Error loading disease info: {e}")
+            disease_info = {}
 
-    # Initialize Production PyTorch Model B Inference Engine
+    # 3. Initialize PyTorch Vision Transformer Inference Engine
     try:
-        dpd_engine = dpd_model.get_inference_engine()
-        print("Successfully initialized DPD ViT Model B Inference Engine.")
+        dpd_engine = dpd_model.DPDInferenceEngine()
     except Exception as e:
-        print(f"Error initializing DPD ViT Engine: {e}")
+        print(f"Error initializing DPD Inference Engine: {e}")
+        dpd_engine = None
 
+
+# Load assets on startup
 load_assets()
 
 # ---------------------------------------------------------
-# Authentication Dependency Helper
+# Authentication Dependency Helpers
 # ---------------------------------------------------------
-def get_current_user(request: Request, authorization: Optional[str] = Header(None)) -> Optional[Dict[str, Any]]:
-    """Extracts and validates JWT token from Authorization: Bearer <token> header."""
-    auth_header = authorization or request.headers.get("authorization") or request.headers.get("Authorization")
-    if not auth_header:
-        return None
-    try:
-        parts = auth_header.split()
-        if len(parts) != 2 or parts[0].lower() != "bearer":
-            return None
-        token = parts[1]
-        payload = database.decode_access_token(token)
-        if not payload or "sub" not in payload:
-            return None
-        user = database.get_user_by_id(int(payload["sub"]))
-        return user
-    except Exception:
+def get_current_user(
+    authorization: Optional[str] = Header(None)
+) -> Optional[Dict[str, Any]]:
+    """Extracts and validates current user from Authorization header if present."""
+    if not authorization:
         return None
 
-def require_auth(user: Optional[Dict[str, Any]] = Depends(get_current_user)) -> Dict[str, Any]:
-    if not user:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Authentication required. Please log in.",
-            headers={"WWW-Authenticate": "Bearer"},
-        )
+    scheme, _, token = authorization.partition(" ")
+    if scheme.lower() != "bearer" or not token:
+        return None
+
+    payload = database.decode_access_token(token)
+    if not payload or "sub" not in payload:
+        return None
+
+    user_id = payload["sub"]
+    user = database.get_user_by_id(user_id)
     return user
 
+
+def require_auth(
+    current_user: Optional[Dict[str, Any]] = Depends(get_current_user)
+) -> Dict[str, Any]:
+    """Enforces authentication; raises HTTP 401 if user is not authenticated."""
+    if not current_user:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Authentication required. Please log in to access this resource.",
+            headers={"WWW-Authenticate": "Bearer"}
+        )
+    return current_user
+
+
 # ---------------------------------------------------------
-# Web Template & Auth Endpoints
+# Health & Readiness Probes
+# ---------------------------------------------------------
+@app.get("/health")
+async def health_check():
+    """Fast liveness check."""
+    return {"status": "ok", "service": "multi-crop-disease-detection", "version": "3.0"}
+
+
+@app.get("/health/ready")
+async def readiness_check():
+    """Deep readiness check verifying model loading and database connectivity."""
+    is_model_ready = dpd_engine is not None and getattr(dpd_engine, "loaded", False)
+    is_db_ready = False
+    try:
+        conn = database.get_db()
+        cursor = conn.cursor()
+        cursor.execute("SELECT 1")
+        is_db_ready = cursor.fetchone() is not None
+        conn.close()
+    except Exception:
+        is_db_ready = False
+
+    status_code = status.HTTP_200_OK if (is_model_ready and is_db_ready) else status.HTTP_503_SERVICE_UNAVAILABLE
+    return JSONResponse(
+        status_code=status_code,
+        content={
+            "status": "ready" if (is_model_ready and is_db_ready) else "degraded",
+            "model_loaded": is_model_ready,
+            "database_connected": is_db_ready
+        }
+    )
+
+
+# ---------------------------------------------------------
+# Web Interface & Page Route
 # ---------------------------------------------------------
 @app.get("/", response_class=HTMLResponse)
 async def serve_home(request: Request):
-    """Serves the main application user interface."""
-    return templates.TemplateResponse(request=request, name="index.html")
+    """Renders the comprehensive single-page web portal."""
+    return templates.TemplateResponse("index.html", {"request": request})
 
 
+# ---------------------------------------------------------
+# User Authentication Routes
+# ---------------------------------------------------------
 @app.post("/auth/register")
 async def register(payload: Dict[str, str]):
+    """Registers a new user account."""
     username = payload.get("username", "").strip()
     email = payload.get("email", "").strip().lower()
     password = payload.get("password", "")
 
     if not username or not email or not password:
-        raise HTTPException(status_code=400, detail="All fields (username, email, password) are required.")
+        raise HTTPException(status_code=400, detail="Username, email, and password are required.")
 
     if len(password) < 6:
         raise HTTPException(status_code=400, detail="Password must be at least 6 characters long.")
 
     try:
         user = database.register_user(username, email, password)
-        token = database.create_access_token({"sub": str(user["id"]), "username": user["username"]})
+        token = database.create_access_token({"sub": user["id"], "username": user["username"]})
         return {
-            "message": "Registration successful.",
-            "user": user,
-            "access_token": token,
-            "token_type": "bearer"
+            "success": True,
+            "message": "User registered successfully.",
+            "token": token,
+            "user": user
         }
-    except ValueError as ve:
-        raise HTTPException(status_code=400, detail=str(ve))
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Registration failed: {str(e)}")
 
 
 @app.post("/auth/login")
 async def login(payload: Dict[str, str]):
+    """Authenticates an existing user and returns a JWT access token."""
     username_or_email = payload.get("username_or_email", "").strip()
     password = payload.get("password", "")
 
@@ -154,18 +210,14 @@ async def login(payload: Dict[str, str]):
     if not user:
         raise HTTPException(status_code=401, detail="Invalid username/email or password.")
 
-    token = database.create_access_token({"sub": str(user["id"]), "username": user["username"]})
+    token = database.create_access_token({"sub": user["id"], "username": user["username"]})
     return {
+        "success": True,
         "message": "Login successful.",
-        "user": user,
-        "access_token": token,
-        "token_type": "bearer"
+        "token": token,
+        "user": user
     }
 
-
-@app.get("/auth/me")
-async def get_me(user: Dict[str, Any] = Depends(require_auth)):
-    return {"user": user}
 
 # ---------------------------------------------------------
 # Image Classification & Prediction Route
@@ -176,8 +228,8 @@ async def predict_crop_disease(
     current_user: Optional[Dict[str, Any]] = Depends(get_current_user)
 ):
     """
-    Handles leaf image upload, validates file type, runs DPD ViT Model B prediction,
-    extracts Top-1 & Top-3 predictions, formats advisory details, and logs history.
+    Handles leaf image upload, validates file type and size, runs DPD ViT Model B prediction
+    asynchronously, extracts Top-1 & Top-3 predictions, formats advisory details, and logs history.
     """
     global dpd_engine, class_names, disease_info
     
@@ -189,7 +241,7 @@ async def predict_crop_disease(
                 detail="Model is currently initializing. Please try again in a moment."
             )
 
-    # 1. Validate File Format
+    # 1. Validate File Format & MIME Type
     if not file.content_type or not file.content_type.startswith("image/"):
         raise HTTPException(status_code=400, detail="Invalid file type. Please upload a valid crop leaf image (JPEG/PNG/WebP).")
 
@@ -197,8 +249,15 @@ async def predict_crop_disease(
     if not image_bytes:
         raise HTTPException(status_code=400, detail="Uploaded file is empty.")
 
+    # 2. Enforce Maximum File Size Limit (10MB)
+    if len(image_bytes) > MAX_UPLOAD_SIZE:
+        raise HTTPException(
+            status_code=status.HTTP_413_REQUEST_ENTITY_TOO_LARGE,
+            detail=f"File exceeds maximum allowed upload size of {MAX_UPLOAD_SIZE // (1024 * 1024)} MB."
+        )
+
     try:
-        # 2. Save Uploaded Image to Local uploads/ Directory
+        # 3. Save Uploaded Image to Local uploads/ Directory
         filename = f"scan_{uuid.uuid4().hex[:10]}.jpg"
         save_path = os.path.join(UPLOADS_DIR, filename)
         relative_image_path = f"uploads/{filename}"
@@ -206,8 +265,8 @@ async def predict_crop_disease(
         img = Image.open(io.BytesIO(image_bytes)).convert("RGB")
         img.save(save_path, "JPEG", quality=90)
 
-        # 3. Model B Inference (Dual-Head ViT-Base)
-        pred_result = dpd_engine.predict(img, disease_info=disease_info)
+        # 4. Asynchronous Model B Inference (Dual-Head ViT-Base) via Threadpool
+        pred_result = await asyncio.to_thread(dpd_engine.predict, img, disease_info)
 
         crop_name = pred_result["crop"]
         disease_name = pred_result["disease"]
@@ -218,7 +277,7 @@ async def predict_crop_disease(
 
         is_low_confidence = confidence < CONFIDENCE_THRESHOLD
 
-        # 4. GATING: Non-Leaf or Low-Confidence Out-of-Distribution Image
+        # 5. GATING: Non-Leaf or Low-Confidence Out-of-Distribution Image
         if is_low_confidence or pred_result.get("is_uncertain", False):
             response_payload = {
                 "success": True,
@@ -237,17 +296,21 @@ async def predict_crop_disease(
             }
 
             if current_user:
-                database.save_prediction(
-                    user_id=current_user["id"],
-                    crop="Non-Crop",
-                    disease="No Plant Leaf Detected",
-                    confidence=confidence,
-                    image_path=relative_image_path
-                )
+                try:
+                    pred_id = database.save_prediction(
+                        user_id=current_user["id"],
+                        crop="Non-Crop",
+                        disease="No Plant Leaf Detected",
+                        confidence=confidence,
+                        image_path=relative_image_path
+                    )
+                    response_payload["prediction_id"] = pred_id
+                except Exception as db_err:
+                    print(f"Warning: Failed to save low-confidence prediction to history: {db_err}")
 
             return JSONResponse(content=response_payload)
 
-        # 5. CONFIDENT PLANT DISEASE PREDICTION RESPONSE
+        # 6. CONFIDENT PLANT DISEASE PREDICTION RESPONSE
         status_text = "Healthy" if is_healthy else "Diseased"
 
         response_payload = {
@@ -271,25 +334,30 @@ async def predict_crop_disease(
             }
         }
 
-        # 6. Log Confident Prediction to SQLite Database
+        # 7. Log Confident Prediction to SQLite Database (Resilient)
         if current_user:
-            pred_id = database.save_prediction(
-                user_id=current_user["id"],
-                crop=crop_name,
-                disease=disease_name,
-                confidence=confidence,
-                image_path=relative_image_path
-            )
-            response_payload["prediction_id"] = pred_id
+            try:
+                pred_id = database.save_prediction(
+                    user_id=current_user["id"],
+                    crop=crop_name,
+                    disease=disease_name,
+                    confidence=confidence,
+                    image_path=relative_image_path
+                )
+                response_payload["prediction_id"] = pred_id
+            except Exception as db_err:
+                print(f"Warning: Failed to save prediction to history: {db_err}")
 
         return JSONResponse(content=response_payload)
 
+    except HTTPException:
+        raise
     except Exception as e:
         print(f"Error during prediction: {e}")
         raise HTTPException(status_code=500, detail=f"An error occurred during prediction processing: {str(e)}")
 
 # ---------------------------------------------------------
-# User History, Statistics, Library & PDF Report API Endpoints
+# History & Library Endpoints (Truncated for brevity, logic remains identical)
 # ---------------------------------------------------------
 @app.get("/api/prediction/{prediction_id}/pdf")
 async def download_prediction_pdf(

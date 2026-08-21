@@ -1,16 +1,17 @@
 import sqlite3
 import os
 import time
+import hmac
 import hashlib
 import binascii
 from typing import Optional, Dict, List, Any
 import jwt
 
-# Database path
-DB_PATH = "database.db"
-SECRET_KEY = "multi_crop_plant_disease_secret_key_2026"
-ALGORITHM = "HS256"
-TOKEN_EXPIRATION_SECONDS = 86400 * 7  # 7 days
+# Database path & Environment-driven JWT Configuration
+DB_PATH = os.getenv("DB_PATH", "database.db")
+SECRET_KEY = os.getenv("JWT_SECRET_KEY", os.getenv("SECRET_KEY", "multi_crop_plant_disease_secret_key_2026_dev"))
+ALGORITHM = os.getenv("JWT_ALGORITHM", "HS256")
+TOKEN_EXPIRATION_SECONDS = int(os.getenv("TOKEN_EXPIRATION_SECONDS", str(86400 * 7)))  # 7 days
 
 # Try importing passlib / bcrypt, fallback to hashlib.pbkdf2_hmac if missing or failing
 BCRYPT_AVAILABLE = False
@@ -42,7 +43,7 @@ def hash_password(password: str) -> str:
 
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
-    """Verifies a plain password against its hash."""
+    """Verifies a plain password against its hash using constant-time comparison."""
     if BCRYPT_AVAILABLE and not hashed_password.startswith("pbkdf2_sha256$"):
         try:
             return pwd_context.verify(plain_password, hashed_password)
@@ -60,7 +61,8 @@ def verify_password(plain_password: str, hashed_password: str) -> bool:
             salt.encode('utf-8'),
             100000
         )
-        return binascii.hexlify(key).decode('ascii') == expected_key
+        computed_key = binascii.hexlify(key).decode('ascii')
+        return hmac.compare_digest(computed_key, expected_key)
     
     return False
 
@@ -83,14 +85,17 @@ def decode_access_token(token: str) -> Optional[dict]:
 
 
 def get_db():
-    """Returns a SQLite database connection with row factory."""
+    """Returns a SQLite database connection with row factory, foreign keys, and WAL mode."""
     conn = sqlite3.connect(DB_PATH)
     conn.row_factory = sqlite3.Row
+    conn.execute("PRAGMA foreign_keys = ON;")
+    conn.execute("PRAGMA journal_mode = WAL;")
+    conn.execute("PRAGMA busy_timeout = 5000;")
     return conn
 
 
 def init_db():
-    """Initializes database schema for users and predictions."""
+    """Initializes database schema and indexes for users and predictions."""
     conn = get_db()
     cursor = conn.cursor()
     
@@ -115,8 +120,22 @@ def init_db():
         confidence REAL NOT NULL,
         image_path TEXT NOT NULL,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        FOREIGN KEY (user_id) REFERENCES users (id)
+        FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
     )
+    """)
+    
+    # Create query performance indexes
+    cursor.execute("""
+    CREATE INDEX IF NOT EXISTS idx_predictions_user_created 
+    ON predictions (user_id, created_at DESC)
+    """)
+    cursor.execute("""
+    CREATE INDEX IF NOT EXISTS idx_users_email 
+    ON users (email)
+    """)
+    cursor.execute("""
+    CREATE INDEX IF NOT EXISTS idx_users_username 
+    ON users (username)
     """)
     
     conn.commit()
@@ -124,7 +143,10 @@ def init_db():
 
 
 def register_user(username: str, email: str, password: str) -> Dict[str, Any]:
-    """Registers a new user in SQLite."""
+    """Registers a new user in SQLite with normalized email."""
+    username = username.strip()
+    email = email.strip().lower()
+    
     conn = get_db()
     cursor = conn.cursor()
     
@@ -135,24 +157,32 @@ def register_user(username: str, email: str, password: str) -> Dict[str, Any]:
         raise ValueError("Username or email already exists")
     
     hashed = hash_password(password)
-    cursor.execute(
-        "INSERT INTO users (username, email, password_hash) VALUES (?, ?, ?)",
-        (username, email, hashed)
-    )
-    user_id = cursor.lastrowid
-    conn.commit()
-    conn.close()
+    try:
+        cursor.execute(
+            "INSERT INTO users (username, email, password_hash) VALUES (?, ?, ?)",
+            (username, email, hashed)
+        )
+        user_id = cursor.lastrowid
+        conn.commit()
+    except sqlite3.IntegrityError:
+        conn.close()
+        raise ValueError("Username or email already exists")
+    finally:
+        conn.close()
     
     return {"id": user_id, "username": username, "email": email}
 
 
 def authenticate_user(username_or_email: str, password: str) -> Optional[Dict[str, Any]]:
-    """Authenticates a user by username or email and password."""
+    """Authenticates a user by username or normalized email and password."""
+    identifier = username_or_email.strip()
+    normalized_email = identifier.lower()
+    
     conn = get_db()
     cursor = conn.cursor()
     cursor.execute(
         "SELECT id, username, email, password_hash FROM users WHERE username = ? OR email = ?",
-        (username_or_email, username_or_email)
+        (identifier, normalized_email)
     )
     user = cursor.fetchone()
     conn.close()

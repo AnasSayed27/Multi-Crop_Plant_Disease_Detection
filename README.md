@@ -180,16 +180,49 @@ python scripts/download_model.py
    models_assets/model_b_partial_adapted.pth
    ```
 
-### Step 5: Start the Web App
+### Step 5: Configure Environment Variables (Optional)
+```bash
+cp .env.example .env
+```
+
+### Step 6: Start the Web Application
 ```bash
 python app.py
 ```
 Or with Uvicorn:
 ```bash
-uvicorn app:app --reload
+uvicorn app:app --host 0.0.0.0 --port 8000 --reload
 ```
 
-Open your browser and go to: **`http://localhost:8000`**
+Open your browser and navigate to: **`http://localhost:8000`**
+
+---
+
+## 🧪 Automated Testing & Quality Assurance
+
+Run the automated Pytest integration and unit test suite with one command:
+```bash
+pytest tests/ -v
+```
+
+---
+
+## 🐳 Docker Deployment
+
+You can build and deploy the application as a standalone container:
+```bash
+# Build container image
+docker build -t crop-disease-detection .
+
+# Run container
+docker run -d -p 7860:7860 \
+  -v $(pwd)/uploads:/code/uploads \
+  -v $(pwd)/database.db:/code/database.db \
+  --name plant-disease-app \
+  crop-disease-detection
+```
+
+Access the containerized application at: **`http://localhost:7860`**
 
 ---
 
@@ -198,11 +231,13 @@ Open your browser and go to: **`http://localhost:8000`**
 | Component | Technology Used | Purpose |
 |---|---|---|
 | **Deep Learning Framework** | PyTorch & Timm | Vision Transformer model training & inference |
-| **Model Architecture** | ViT-Base (Dual Head) | 55-crop and 175-disease classification |
+| **Model Architecture** | ViT-Base (Dual Head) | Dual-head plant species and disease classification |
 | **Backend API** | FastAPI (Python) | High-performance asynchronous REST API |
-| **Database** | SQLite | Lightweight persistent storage for users & scan history |
-| **Authentication** | PyJWT & Passlib | Secure token-based user login & password encryption |
+| **Database** | SQLite (WAL Mode) | Persistent transactional storage for users & scan history |
+| **Authentication** | PyJWT & PBKDF2/Bcrypt | Secure token-based user login & constant-time password verification |
 | **PDF Generation** | ReportLab | Automated clinical diagnostic report creation |
+| **Testing & CI/CD** | Pytest & GitHub Actions | Automated integration testing and quality gates |
+| **Containerization** | Docker | Reproducible container runtime with health probes |
 | **Frontend UI** | HTML5, CSS3, JavaScript | Responsive user interface with Chart.js analytics |
 
 ---

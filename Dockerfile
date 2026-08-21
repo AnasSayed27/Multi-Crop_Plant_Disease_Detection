@@ -11,13 +11,20 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 COPY ./requirements.txt /code/requirements.txt
 RUN pip install --no-cache-dir --upgrade -r /code/requirements.txt
 
-# Copy application files
+# Copy application files (leveraging .dockerignore)
 COPY . /code
 
-# Create uploads directory with write permissions
-RUN mkdir -p /code/uploads && chmod 777 /code/uploads
+# Create storage directories
+RUN mkdir -p /code/uploads /code/models_assets
 
-# Expose Hugging Face Space port 7860
+# Persistent storage volumes for databases and scans
+VOLUME ["/code/uploads", "/code/database.db"]
+
+# Expose server port (Hugging Face default 7860 / standard 8000)
 EXPOSE 7860
+
+# Container Health Probe
+HEALTHCHECK --interval=30s --timeout=5s --start-period=30s --retries=3 \
+  CMD python -c "import urllib.request; urllib.request.urlopen('http://localhost:7860/health')" || exit 1
 
 CMD ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "7860"]

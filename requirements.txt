@@ -28,3 +28,7 @@ cryptography>=40.0.0
 # Utilities & Model Download
 requests>=2.28.0
 gdown>=4.7.0
+
+# Testing & Quality Assurance
+pytest>=7.4.0
+httpx>=0.24.0

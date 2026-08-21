@@ -1,0 +1,33 @@
+name: CI Quality & Test Suite
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.10
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+          cache: "pip"
+
+      - name: Install Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install pytest httpx
+
+      - name: Run Pytest Integration & Unit Tests
+        env:
+          JWT_SECRET_KEY: test_secret_key_ci_12345
+          DB_PATH: test_ci_database.db
+        run: |
+          pytest tests/ -v

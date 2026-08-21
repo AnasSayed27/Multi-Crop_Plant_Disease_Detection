@@ -42,12 +42,16 @@ scratch/
 plantdoc_realworld/
 test_real_images/
 
-# ----- Runtime-Generated User Data -----
+# ----- Runtime-Generated User Data & Environment Secrets -----
 uploads/*.jpg
 uploads/*.jpeg
 uploads/*.png
 uploads/*.webp
 database.db
+test_database.db
+*.db-wal
+*.db-shm
+.env
 
 # ----- Local Evaluation Results -----
 models_assets/consolidated_30_images_eval_results.json

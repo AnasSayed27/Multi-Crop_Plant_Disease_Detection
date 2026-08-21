@@ -121,7 +121,10 @@ class DPDInferenceEngine:
     def _load_weights(self):
         if os.path.exists(self.checkpoint_path):
             try:
-                ckpt = torch.load(self.checkpoint_path, map_location=self.device)
+                try:
+                    ckpt = torch.load(self.checkpoint_path, map_location=self.device, weights_only=True)
+                except TypeError:
+                    ckpt = torch.load(self.checkpoint_path, map_location=self.device)
                 self.model.load_state_dict(ckpt, strict=False)
                 self.model.eval()
                 self.loaded = True

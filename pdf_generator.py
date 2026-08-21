@@ -11,12 +11,16 @@ from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib import colors
 from reportlab.lib.units import inch
 
+import html
+
 def _clean_markdown_for_reportlab(text: str) -> str:
-    """Converts basic Markdown asterisks to ReportLab XML tags (<i>, <b>)."""
+    """Sanitizes text and converts Markdown asterisks to ReportLab XML tags (<i>, <b>)."""
     if not text:
         return ""
+    # Escape raw XML special characters
+    escaped = text.replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;')
     # Convert **bold** to <b>bold</b>
-    formatted = re.sub(r'\*\*(.*?)\*\*', r'<b>\1</b>', text)
+    formatted = re.sub(r'\*\*(.*?)\*\*', r'<b>\1</b>', escaped)
     # Convert *italic* to <i>italic</i>
     formatted = re.sub(r'\*(.*?)\*', r'<i>\1</i>', formatted)
     # Convert newlines to breaks
@@ -119,12 +123,12 @@ def generate_prediction_pdf(
 
     # 1. HEADER BANNER
     story.append(Paragraph("🌿 Multi-Crop Disease Advisory & Diagnostic Report", title_style))
-    story.append(Paragraph("AI-Powered Deep Learning Crop Health Analysis • CS-9130 Agricultural Systems", subtitle_style))
+    story.append(Paragraph("AI-Powered Deep Learning Crop Health Analysis • Vision Transformer Architecture", subtitle_style))
     story.append(HRFlowable(width="100%", thickness=2, color=colors.HexColor('#2e7d32'), spaceAfter=12))
 
     # 2. METADATA & USER INFORMATION TABLE
-    user_name = user.get('username', 'N/A')
-    user_email = user.get('email', 'N/A')
+    user_name = html.escape(str(user.get('username', 'N/A')))
+    user_email = html.escape(str(user.get('email', 'N/A')))
     pred_id = prediction.get('id', 'N/A')
     created_at = prediction.get('created_at', 'N/A')
 
@@ -135,7 +139,7 @@ def generate_prediction_pdf(
         ],
         [
             Paragraph("Scan Date:", meta_label_style), Paragraph(str(created_at), meta_val_style),
-            Paragraph("System Model:", meta_label_style), Paragraph("MobileNetV2 (PlantVillage Fine-Tuned)", meta_val_style)
+            Paragraph("System Model:", meta_label_style), Paragraph("Vision Transformer (DPD ViT-Base Dual-Head)", meta_val_style)
         ]
     ]
 
