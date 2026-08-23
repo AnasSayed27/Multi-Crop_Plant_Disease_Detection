@@ -3,8 +3,11 @@
 # =====================================================
 
 # ----- Python Runtime -----
+.venv
 .venv/
+.venv_linux
 .venv_linux/
+.venv*
 .venv*/
 __pycache__/
 *.pyc
