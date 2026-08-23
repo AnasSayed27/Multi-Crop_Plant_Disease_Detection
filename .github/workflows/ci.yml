@@ -22,6 +22,7 @@ jobs:
       - name: Install Dependencies
         run: |
           python -m pip install --upgrade pip
+          pip install torch torchvision --index-url https://download.pytorch.org/whl/cpu
           pip install -r requirements.txt
           pip install pytest httpx
 
@@ -31,4 +32,4 @@ jobs:
           JWT_SECRET_KEY: multi_crop_plant_disease_secret_key_2026_super_secure_32bytes
           DB_PATH: test_ci_database.db
         run: |
-          pytest tests/ -v
+          python -m pytest tests/ -v
