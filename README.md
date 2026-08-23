@@ -119,23 +119,27 @@ For every diagnosis, the system provides a structured 5-part treatment guide:
 
 ```text
 ├── app.py                             # FastAPI backend web server & API routes
-├── dpd_model.py                       # PyTorch Vision Transformer inference module
-├── database.py                        # SQLite database & user authentication
-├── pdf_generator.py                   # ReportLab 2-page PDF report generator
-├── requirements.txt                   # List of Python dependencies
-├── Dockerfile                         # Docker container configuration
+├── dpd_model.py                       # PyTorch Vision Transformer inference engine
+├── database.py                        # SQLite database, JWT auth & user management
+├── pdf_generator.py                   # ReportLab 2-page clinical diagnostic PDF report generator
+├── requirements.txt                   # Production Python dependencies
+├── Dockerfile                         # Container deployment configuration
+├── .dockerignore                      # Container build exclusion rules
+├── .env.example                       # Environment variables template
+├── pytest.ini                         # Pytest configuration
 ├── templates/
-│   └── index.html                     # Web frontend UI (HTML, CSS, JavaScript)
+│   └── index.html                     # Responsive web frontend UI (HTML5, CSS3, JS, Chart.js)
 ├── models_assets/
-│   ├── model_b_partial_adapted.pth    # Trained ViT model weights (328 MB — see Setup)
+│   ├── model_b_partial_adapted.pth    # Trained ViT model weights (328 MB — auto-downloadable)
 │   ├── disease_info.json              # Complete advisory database (333 crop-disease pairs)
 │   ├── class_names.json               # Supported category names
-│   ├── dpd_55_plants.json             # 55 crops list
-│   └── dpd_175_diseases.json          # 175 diseases list
-├── scripts/                           # Training, evaluation & data preparation scripts
-├── docs/                              # Research analysis & taxonomy documentation
-├── test_app_e2e.py                    # End-to-end integration test suite
-└── test_pdf_report.py                 # PDF report authorization test suite
+│   ├── dpd_55_plants.json             # 55 crops taxonomy
+│   ├── dpd_175_diseases.json          # 175 diseases taxonomy
+│   └── supported_disease_pairs.json   # 333 validated biological pairs
+├── scripts/
+│   └── download_model.py              # Automated 1-click model weights downloader
+└── tests/
+    └── test_api.py                    # Comprehensive API and authorization test suite
 ```
 
 ---
