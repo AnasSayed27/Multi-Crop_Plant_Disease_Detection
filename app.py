@@ -194,6 +194,8 @@ async def register(payload: Dict[str, str]):
             "success": True,
             "message": "User registered successfully.",
             "token": token,
+            "access_token": token,
+            "token_type": "bearer",
             "user": user
         }
     except ValueError as e:
@@ -220,8 +222,16 @@ async def login(payload: Dict[str, str]):
         "success": True,
         "message": "Login successful.",
         "token": token,
+        "access_token": token,
+        "token_type": "bearer",
         "user": user
     }
+
+
+@app.get("/auth/me")
+async def get_me(user: Dict[str, Any] = Depends(require_auth)):
+    """Returns profile for currently authenticated user."""
+    return {"user": user}
 
 
 # ---------------------------------------------------------

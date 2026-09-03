@@ -912,12 +912,18 @@
     let libraryData = [];
 
     // Tab Switching
-    function switchTab(tabName) {
-      document.querySelectorAll('.nav-tab').forEach(b => b.classList.remove('active'));
+    function switchTab(tabName, clickedBtn = null) {
+      document.querySelectorAll('.nav-tab').forEach(b => {
+        if (clickedBtn) {
+          b.classList.toggle('active', b === clickedBtn);
+        } else {
+          b.classList.toggle('active', b.getAttribute('onclick')?.includes(`'${tabName}'`));
+        }
+      });
       document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
 
-      event.target.classList.add('active');
-      document.getElementById(tabName + 'Tab').classList.add('active');
+      const targetTab = document.getElementById(tabName + 'Tab');
+      if (targetTab) targetTab.classList.add('active');
 
       if (tabName === 'library') loadLibrary();
       if (tabName === 'history') loadHistory();
@@ -925,9 +931,34 @@
     }
 
     // JWT Helpers
-    function getToken() { return localStorage.getItem('plant_disease_jwt_token'); }
-    function setToken(token) { localStorage.setItem('plant_disease_jwt_token', token); updateAuthUI(); }
-    function clearToken() { localStorage.removeItem('plant_disease_jwt_token'); updateAuthUI(); }
+    function getToken() {
+      const token = localStorage.getItem('plant_disease_jwt_token');
+      if (!token || token === 'undefined' || token === 'null' || token.trim() === '') {
+        return null;
+      }
+      return token;
+    }
+
+    function setToken(token) {
+      if (!token || token === 'undefined' || token === 'null') return;
+      localStorage.setItem('plant_disease_jwt_token', token);
+      updateAuthUI();
+    }
+
+    function clearToken() {
+      localStorage.removeItem('plant_disease_jwt_token');
+      updateAuthUI();
+      const tbody = document.getElementById('historyTbody');
+      if (tbody) tbody.innerHTML = '';
+      const notice = document.getElementById('historyAuthNotice');
+      if (notice) notice.style.display = 'block';
+      const table = document.getElementById('historyTableContainer');
+      if (table) table.style.display = 'none';
+      const dashNotice = document.getElementById('dashAuthNotice');
+      if (dashNotice) dashNotice.style.display = 'block';
+      const dashContent = document.getElementById('dashContent');
+      if (dashContent) dashContent.style.display = 'none';
+    }
 
     function updateAuthUI() {
       const token = getToken();
@@ -975,9 +1006,16 @@
         });
         const data = await res.json();
         if (!res.ok) throw new Error(data.detail || 'Authentication failed');
-        setToken(data.access_token);
+        const token = data.access_token || data.token;
+        if (!token) throw new Error('No authentication token received from server.');
+        setToken(token);
         closeAuthModal();
         showToast('Authenticated successfully!', 'success');
+
+        // Automatically refresh history or dashboard if currently on that tab
+        const activeTab = document.querySelector('.tab-content.active');
+        if (activeTab && activeTab.id === 'historyTab') loadHistory();
+        if (activeTab && activeTab.id === 'dashboardTab') loadDashboard();
       } catch (err) {
         document.getElementById('authError').innerText = err.message;
       }
@@ -1373,11 +1411,15 @@
         const res = await fetch('/api/history', {
           headers: { 'Authorization': `Bearer ${token}` }
         });
+        if (res.status === 401) {
+          clearToken();
+          return;
+        }
         const data = await res.json();
         const tbody = document.getElementById('historyTbody');
 
         if (!data.history || data.history.length === 0) {
-          tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: var(--text-muted);">No scan history recorded.</td></tr>';
+          tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: var(--text-muted); padding: 20px;">No scan history recorded. Upload a leaf image to start tracking!</td></tr>';
           return;
         }
 
@@ -1385,9 +1427,9 @@
           <tr>
             <td>${row.created_at}</td>
             <td><img src="/${row.image_path.replace(/^\/+/, '')}" class="thumb-img" alt="Scan Thumb"></td>
-            <td>${row.crop}</td>
+            <td><strong>${row.crop}</strong></td>
             <td>${row.disease}</td>
-            <td>${row.confidence.toFixed(2)}%</td>
+            <td>${typeof row.confidence === 'number' ? row.confidence.toFixed(1) : row.confidence}%</td>
             <td>
               <button onclick="downloadPdfById(${row.id})" style="background: #e8f5e9; color: #1b5e20; border: 1px solid #a5d6a7; padding: 4px 10px; border-radius: 4px; font-weight: 700; cursor: pointer;">
                 📄 PDF
@@ -1396,7 +1438,7 @@
           </tr>
         `).join('');
       } catch (err) {
-        document.getElementById('historyTbody').innerHTML = '<tr><td colspan="6">Error loading history.</td></tr>';
+        document.getElementById('historyTbody').innerHTML = '<tr><td colspan="6" style="text-align: center; color: var(--accent-danger);">Error loading history. Please try again.</td></tr>';
       }
     }
 
@@ -1453,16 +1495,21 @@
         const res = await fetch('/api/statistics', {
           headers: { 'Authorization': `Bearer ${token}` }
         });
+        if (res.status === 401) {
+          clearToken();
+          return;
+        }
         const data = await res.json();
         const stats = data.statistics;
+        if (!stats) return;
 
         // Animated Count-Up Numerals (Step 3B)
-        animateCountUp('statTotalScans', stats.total_scans);
-        animateCountUp('statAvgConf', stats.avg_confidence, true);
-        document.getElementById('statTopDisease').innerText = stats.top_disease;
+        animateCountUp('statTotalScans', stats.total_scans || 0);
+        animateCountUp('statAvgConf', stats.avg_confidence || 0, true);
+        document.getElementById('statTopDisease').innerText = stats.top_disease || 'None';
 
         // Render Chart.js Donut & Bar Charts (Step 3B)
-        renderDashboardCharts(stats.crop_counts);
+        renderDashboardCharts(stats.crop_counts || {});
 
       } catch (err) {
         console.error("Dashboard error:", err);
@@ -1477,7 +1524,11 @@
       const labels = Object.keys(cropCounts || {});
       const dataValues = Object.values(cropCounts || {});
 
-      if (labels.length === 0) return;
+      if (labels.length === 0) {
+        if (donutChartInstance) { donutChartInstance.destroy(); donutChartInstance = null; }
+        if (barChartInstance) { barChartInstance.destroy(); barChartInstance = null; }
+        return;
+      }
 
       const colors = ['#1B4332', '#2D6A4F', '#40916C', '#52B788', '#74C69D', '#95D5B2', '#D8F3DC'];
 
