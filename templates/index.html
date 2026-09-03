@@ -1426,7 +1426,12 @@
         tbody.innerHTML = data.history.map(row => `
           <tr>
             <td>${row.created_at}</td>
-            <td><img src="/${row.image_path.replace(/^\/+/, '')}" class="thumb-img" alt="Scan Thumb"></td>
+            <td>
+              <img src="/${row.image_path.replace(/^\/+/, '')}" 
+                   class="thumb-img" 
+                   alt="${row.crop}" 
+                   onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns=\\'http://www.w3.org/2000/svg\\' width=\\'44\\' height=\\'44\\' viewBox=\\'0 0 44 44\\'><rect width=\\'44\\' height=\\'44\\' rx=\\'6\\' fill=\\'%23e8f5e9\\'/><text x=\\'50%\\' y=\\'56%\\' dominant-baseline=\\'middle\\' text-anchor=\\'middle\\' font-size=\\'20\\'>🌿</text></svg>';">
+            </td>
             <td><strong>${row.crop}</strong></td>
             <td>${row.disease}</td>
             <td>${typeof row.confidence === 'number' ? row.confidence.toFixed(1) : row.confidence}%</td>
