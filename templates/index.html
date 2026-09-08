@@ -588,110 +588,25 @@
     .form-group input { width: 100%; padding: 8px 12px; border: 1px solid var(--border-color); border-radius: 6px; font-size: 0.95rem; }
     .modal-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 15px; }
 
-    /* Mobile Navigation Drawer (Phone Only) */
-    .hamburger-btn { display: none; background: none; border: none; font-size: 1.6rem; color: #ffffff; cursor: pointer; padding: 0 4px; line-height: 1; }
+    /* Mobile Navigation & Responsiveness */
+    .hamburger-btn { display: none; background: none; border: none; font-size: 1.6rem; color: #fff; cursor: pointer; }
     .mobile-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 1999; }
-    .mobile-drawer { position: fixed; top: 0; right: -280px; width: 260px; height: 100%; background: #ffffff; z-index: 2000; transition: right 0.25s ease; padding: 20px; display: flex; flex-direction: column; gap: 10px; box-shadow: -2px 0 10px rgba(0,0,0,0.15); }
+    .mobile-drawer { position: fixed; top: 0; right: -280px; width: 260px; height: 100%; background: var(--color-bg-elevated, #fff); z-index: 2000; transition: right 0.25s ease; padding: 20px; display: flex; flex-direction: column; gap: 10px; box-shadow: -2px 0 10px rgba(0,0,0,0.15); }
     .mobile-drawer.open { right: 0; }
     .mobile-drawer-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--color-border); padding-bottom: 10px; font-weight: 700; color: var(--color-primary); }
-    .mobile-drawer .nav-tab { width: 100%; text-align: left; padding: 10px 14px; border: 1px solid var(--color-border); border-radius: var(--radius-md); color: var(--color-text); background: var(--color-bg); }
-    .mobile-drawer .nav-tab.active { background: var(--color-primary) !important; color: #ffffff !important; }
+    .mobile-drawer .nav-tab { width: 100%; text-align: left; padding: 10px 14px; border: 1px solid var(--color-border); border-radius: var(--radius-md); background: var(--color-bg); color: var(--color-text); }
+    .mobile-drawer .nav-tab.active { background: var(--color-primary) !important; color: #fff !important; }
     .mobile-auth { border-top: 1px solid var(--color-border); padding-top: 12px; display: flex; flex-direction: column; gap: 8px; }
     .mobile-auth .auth-btn { width: 100%; padding: 10px; text-align: center; border-radius: var(--radius-md); }
 
     @media (max-width: 768px) {
-      html, body {
-        width: 100%;
-        max-width: 100%;
-        overflow-x: hidden;
-      }
-      header {
-        padding: 12px 16px;
-        width: 100%;
-        box-sizing: border-box;
-      }
-      header h1 {
-        font-size: 1.05rem;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-      }
       header .nav-tabs, header .auth-btn-group { display: none !important; }
       .hamburger-btn { display: block !important; }
-
-      main {
-        padding: 0 12px;
-        margin: 16px auto;
-        width: 100%;
-        box-sizing: border-box;
-      }
-      .card {
-        padding: 16px;
-        margin-bottom: 16px;
-      }
-
-      /* Dashboard Mobile Responsiveness */
-      .stats-grid {
-        grid-template-columns: 1fr;
-        gap: 12px;
-        margin-bottom: 16px;
-      }
-      .stat-card {
-        padding: 16px 12px;
-      }
-      .stat-num {
-        font-size: 1.6rem;
-      }
-      .dashboard-charts-grid {
-        grid-template-columns: 1fr;
-        gap: 16px;
-        margin-top: 16px;
-      }
-      .chart-card {
-        padding: 14px;
-        overflow: hidden;
-      }
-      .chart-wrapper {
-        height: 270px;
-      }
-
-      /* History Table Mobile Smooth Container Scroll */
-      #historyTableContainer {
-        width: 100%;
-        overflow-x: auto;
-        -webkit-overflow-scrolling: touch;
-        margin-top: 8px;
-        border-radius: var(--radius-sm);
-        border: 1px solid var(--color-border);
-      }
-      #historyTableContainer table {
-        min-width: 540px;
-        margin-top: 0;
-      }
-      th, td {
-        padding: 10px 12px;
-        font-size: 0.8rem;
-      }
-
-      /* Advisory & Diagnostics Responsive Wrap */
-      .advisory-grid {
-        grid-template-columns: 1fr;
-      }
-      .confidence-ring-wrapper {
-        flex-direction: column;
-        text-align: center;
-        gap: 12px;
-      }
-      .diagnosis-header {
-        padding: 12px;
-      }
-      .diagnosis-header > div {
-        flex-wrap: wrap;
-        gap: 8px;
-      }
-      .diagnosis-title {
-        font-size: 1.1rem;
-      }
+      .stats-grid, .dashboard-charts-grid, .advisory-grid { grid-template-columns: 1fr; }
+      .chart-wrapper { height: 260px; }
+      #historyTableContainer { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+      #historyTableContainer table { min-width: 500px; }
+      .confidence-ring-wrapper { flex-direction: column; text-align: center; gap: 12px; }
     }
   </style>
 </head>
@@ -1303,6 +1218,24 @@
       }
     };
 
+    // Somber Falling Wilted Plant Animation for Diseased Crops
+    function triggerSadAnimation() {
+      if (!window.confetti || !confetti.shapeFromText) return;
+      const wilted = confetti.shapeFromText({ text: '🥀', scalar: 3.8 });
+      confetti({
+        shapes: [wilted],
+        scalar: 3.8,
+        flat: true,           // Stop rotation and 3D spinning (keeps emoji upright and sharp)
+        particleCount: 26,
+        angle: 270,           // Points straight down (no upward burst)
+        spread: 180,          // Wide screen spread
+        origin: { y: -0.05 }, // Drops from above the viewport
+        startVelocity: 12,
+        gravity: 0.85,
+        ticks: 240
+      });
+    }
+
     function renderResults(data) {
       const resultSec = document.getElementById('resultSection');
       const nonLeafCard = document.getElementById('nonLeafCard');
@@ -1359,7 +1292,7 @@
         document.querySelectorAll('.stagger-reveal').forEach(el => el.classList.add('revealed'));
       });
 
-      // Celebratory Confetti Burst for Healthy Crop (Step 3B)
+      // Celebratory Confetti for Healthy, Sad Wilted Emojis for Diseased
       if (data.status === 'Healthy' || (data.disease && data.disease.toLowerCase().includes('healthy'))) {
         if (window.confetti) {
           confetti({
@@ -1368,6 +1301,8 @@
             origin: { y: 0.6 }
           });
         }
+      } else if (data.status === 'Diseased' || (data.disease && !data.disease.toLowerCase().includes('healthy'))) {
+        triggerSadAnimation();
       }
 
       // Low confidence box
