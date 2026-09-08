@@ -426,6 +426,21 @@
 
     /* Dashboard Stats Grid (Step 3) */
     .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-5); margin-bottom: var(--space-6); }
+    .dashboard-charts-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-6); margin-top: var(--space-6); }
+    .chart-card {
+      background: var(--color-bg-elevated);
+      padding: var(--space-5);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--color-border);
+      box-shadow: var(--shadow-sm);
+      min-width: 0;
+    }
+    .chart-wrapper {
+      height: 240px;
+      position: relative;
+      width: 100%;
+    }
+    #historyTableContainer { width: 100%; }
     .stat-card {
       background: var(--color-bg-elevated);
       border-radius: var(--radius-lg);
@@ -558,10 +573,6 @@
       color: var(--color-text-muted);
     }
     .empty-state svg { width: 48px; height: 48px; stroke: var(--color-text-muted); opacity: 0.5; margin-bottom: var(--space-3); }
-    .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-bottom: 20px; }
-    .stat-card { background: #f8fafc; border: 1px solid var(--border-color); padding: 20px; border-radius: 8px; text-align: center; }
-    .stat-num { font-size: 1.8rem; font-weight: 700; color: var(--primary-color); }
-    .stat-label { font-size: 0.85rem; color: var(--text-muted); margin-top: 4px; }
 
     /* Modal Dialog */
     .modal-overlay {
@@ -577,9 +588,110 @@
     .form-group input { width: 100%; padding: 8px 12px; border: 1px solid var(--border-color); border-radius: 6px; font-size: 0.95rem; }
     .modal-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 15px; }
 
+    /* Mobile Navigation Drawer (Phone Only) */
+    .hamburger-btn { display: none; background: none; border: none; font-size: 1.6rem; color: #ffffff; cursor: pointer; padding: 0 4px; line-height: 1; }
+    .mobile-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 1999; }
+    .mobile-drawer { position: fixed; top: 0; right: -280px; width: 260px; height: 100%; background: #ffffff; z-index: 2000; transition: right 0.25s ease; padding: 20px; display: flex; flex-direction: column; gap: 10px; box-shadow: -2px 0 10px rgba(0,0,0,0.15); }
+    .mobile-drawer.open { right: 0; }
+    .mobile-drawer-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--color-border); padding-bottom: 10px; font-weight: 700; color: var(--color-primary); }
+    .mobile-drawer .nav-tab { width: 100%; text-align: left; padding: 10px 14px; border: 1px solid var(--color-border); border-radius: var(--radius-md); color: var(--color-text); background: var(--color-bg); }
+    .mobile-drawer .nav-tab.active { background: var(--color-primary) !important; color: #ffffff !important; }
+    .mobile-auth { border-top: 1px solid var(--color-border); padding-top: 12px; display: flex; flex-direction: column; gap: 8px; }
+    .mobile-auth .auth-btn { width: 100%; padding: 10px; text-align: center; border-radius: var(--radius-md); }
+
     @media (max-width: 768px) {
-      .advisory-grid { grid-template-columns: 1fr; }
-      .stats-grid { grid-template-columns: 1fr; }
+      html, body {
+        width: 100%;
+        max-width: 100%;
+        overflow-x: hidden;
+      }
+      header {
+        padding: 12px 16px;
+        width: 100%;
+        box-sizing: border-box;
+      }
+      header h1 {
+        font-size: 1.05rem;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      header .nav-tabs, header .auth-btn-group { display: none !important; }
+      .hamburger-btn { display: block !important; }
+
+      main {
+        padding: 0 12px;
+        margin: 16px auto;
+        width: 100%;
+        box-sizing: border-box;
+      }
+      .card {
+        padding: 16px;
+        margin-bottom: 16px;
+      }
+
+      /* Dashboard Mobile Responsiveness */
+      .stats-grid {
+        grid-template-columns: 1fr;
+        gap: 12px;
+        margin-bottom: 16px;
+      }
+      .stat-card {
+        padding: 16px 12px;
+      }
+      .stat-num {
+        font-size: 1.6rem;
+      }
+      .dashboard-charts-grid {
+        grid-template-columns: 1fr;
+        gap: 16px;
+        margin-top: 16px;
+      }
+      .chart-card {
+        padding: 14px;
+        overflow: hidden;
+      }
+      .chart-wrapper {
+        height: 270px;
+      }
+
+      /* History Table Mobile Smooth Container Scroll */
+      #historyTableContainer {
+        width: 100%;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        margin-top: 8px;
+        border-radius: var(--radius-sm);
+        border: 1px solid var(--color-border);
+      }
+      #historyTableContainer table {
+        min-width: 540px;
+        margin-top: 0;
+      }
+      th, td {
+        padding: 10px 12px;
+        font-size: 0.8rem;
+      }
+
+      /* Advisory & Diagnostics Responsive Wrap */
+      .advisory-grid {
+        grid-template-columns: 1fr;
+      }
+      .confidence-ring-wrapper {
+        flex-direction: column;
+        text-align: center;
+        gap: 12px;
+      }
+      .diagnosis-header {
+        padding: 12px;
+      }
+      .diagnosis-header > div {
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+      .diagnosis-title {
+        font-size: 1.1rem;
+      }
     }
   </style>
 </head>
@@ -588,17 +700,38 @@
   <!-- Header & Navigation -->
   <header>
     <h1>🌿 Multi-Crop Disease Advisory</h1>
+    
+    <!-- Desktop Navigation Tabs (PC Only) -->
     <div class="nav-tabs">
       <button class="nav-tab active" onclick="switchTab('classifier')">Classifier</button>
       <button class="nav-tab" onclick="switchTab('library')">Disease Library</button>
       <button class="nav-tab" onclick="switchTab('history')">History</button>
       <button class="nav-tab" onclick="switchTab('dashboard')">Dashboard</button>
     </div>
+    
+    <!-- Desktop Auth Group (PC Only) -->
     <div class="auth-btn-group" id="authBtnGroup">
       <button class="auth-btn" onclick="openAuthModal('login')">Login</button>
       <button class="auth-btn" onclick="openAuthModal('register')">Register</button>
     </div>
+
+    <!-- Mobile Hamburger Button (Phone Only) -->
+    <button class="hamburger-btn" onclick="toggleMenu(true)" aria-label="Open Navigation Menu">☰</button>
   </header>
+
+  <!-- Mobile Navigation Drawer (Phone Only) -->
+  <div class="mobile-overlay" id="mobileOverlay" onclick="toggleMenu(false)"></div>
+  <aside class="mobile-drawer" id="mobileDrawer">
+    <div class="mobile-drawer-header">
+      <span>🌿 Menu</span>
+      <button onclick="toggleMenu(false)" style="background:none;border:none;font-size:1.3rem;cursor:pointer;">✕</button>
+    </div>
+    <button class="nav-tab active" onclick="switchTab('classifier'); toggleMenu(false);">🔬 Classifier</button>
+    <button class="nav-tab" onclick="switchTab('library'); toggleMenu(false);">📚 Disease Library</button>
+    <button class="nav-tab" onclick="switchTab('history'); toggleMenu(false);">🕒 History</button>
+    <button class="nav-tab" onclick="switchTab('dashboard'); toggleMenu(false);">📊 Dashboard</button>
+    <div class="mobile-auth" id="mobileAuth"></div>
+  </aside>
 
   <main>
     <!-- TAB 1: DISEASE CLASSIFIER -->
@@ -756,16 +889,16 @@
             </div>
           </div>
           <!-- Chart.js Micro-Interaction Grid (Step 3B) -->
-          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-6); margin-top: var(--space-6);">
-            <div style="background: var(--color-bg-elevated); padding: var(--space-5); border-radius: var(--radius-lg); border: 1px solid var(--color-border); box-shadow: var(--shadow-sm);">
+          <div class="dashboard-charts-grid">
+            <div class="chart-card">
               <h3 style="font-size: var(--text-base); margin-bottom: var(--space-3); color: var(--color-primary);">Crop Distribution</h3>
-              <div style="height: 240px; position: relative;">
+              <div class="chart-wrapper">
                 <canvas id="cropDonutChart"></canvas>
               </div>
             </div>
-            <div style="background: var(--color-bg-elevated); padding: var(--space-5); border-radius: var(--radius-lg); border: 1px solid var(--color-border); box-shadow: var(--shadow-sm);">
+            <div class="chart-card">
               <h3 style="font-size: var(--text-base); margin-bottom: var(--space-3); color: var(--color-primary);">Predictions Breakdown</h3>
-              <div style="height: 240px; position: relative;">
+              <div class="chart-wrapper">
                 <canvas id="diseaseBarChart"></canvas>
               </div>
             </div>
@@ -960,15 +1093,27 @@
       if (dashContent) dashContent.style.display = 'none';
     }
 
+    // Mobile Drawer Controls
+    function toggleMenu(open) {
+      const d = document.getElementById('mobileDrawer');
+      const o = document.getElementById('mobileOverlay');
+      if (d && o) {
+        d.classList.toggle('open', open);
+        o.style.display = open ? 'block' : 'none';
+        document.body.style.overflow = open ? 'hidden' : '';
+      }
+    }
+
     function updateAuthUI() {
       const token = getToken();
       const group = document.getElementById('authBtnGroup');
+      const mGroup = document.getElementById('mobileAuth');
       if (token) {
-        group.innerHTML = `<span style="font-size: 0.85rem; margin-right: 5px;">Logged In</span>
-                           <button class="auth-btn" onclick="clearToken()">Logout</button>`;
+        if (group) group.innerHTML = `<span style="font-size: 0.85rem; margin-right: 5px;">Logged In</span><button class="auth-btn" onclick="clearToken()">Logout</button>`;
+        if (mGroup) mGroup.innerHTML = `<div style="text-align:center;font-size:0.85rem;color:var(--color-primary);font-weight:600;">👤 Account Active</div><button class="auth-btn" style="border:1px solid var(--color-primary);" onclick="clearToken(); toggleMenu(false);">Logout</button>`;
       } else {
-        group.innerHTML = `<button class="auth-btn" onclick="openAuthModal('login')">Login</button>
-                           <button class="auth-btn" onclick="openAuthModal('register')">Register</button>`;
+        if (group) group.innerHTML = `<button class="auth-btn" onclick="openAuthModal('login')">Login</button><button class="auth-btn" onclick="openAuthModal('register')">Register</button>`;
+        if (mGroup) mGroup.innerHTML = `<button class="auth-btn" style="background:var(--color-primary);color:#fff;" onclick="openAuthModal('login'); toggleMenu(false);">Login</button><button class="auth-btn" style="border:1px solid var(--color-primary);" onclick="openAuthModal('register'); toggleMenu(false);">Register</button>`;
       }
     }
 
@@ -1537,6 +1682,8 @@
 
       const colors = ['#1B4332', '#2D6A4F', '#40916C', '#52B788', '#74C69D', '#95D5B2', '#D8F3DC'];
 
+      const isMobile = window.innerWidth <= 768;
+
       // Donut Chart
       const donutCanvas = document.getElementById('cropDonutChart');
       if (donutCanvas && window.Chart) {
@@ -1557,7 +1704,14 @@
             responsive: true,
             maintainAspectRatio: false,
             plugins: {
-              legend: { position: 'right', labels: { font: { family: 'Inter', size: 11 } } }
+              legend: {
+                position: isMobile ? 'bottom' : 'right',
+                labels: {
+                  boxWidth: isMobile ? 12 : 40,
+                  padding: isMobile ? 8 : 10,
+                  font: { family: 'Inter', size: isMobile ? 10 : 11 }
+                }
+              }
             }
           }
         });
@@ -1585,7 +1739,13 @@
             plugins: { legend: { display: false } },
             scales: {
               y: { beginAtZero: true, ticks: { stepSize: 1 } },
-              x: { ticks: { font: { family: 'Inter', size: 11 } } }
+              x: {
+                ticks: {
+                  font: { family: 'Inter', size: isMobile ? 9 : 11 },
+                  maxRotation: isMobile ? 45 : 0,
+                  autoSkip: true
+                }
+              }
             }
           }
         });

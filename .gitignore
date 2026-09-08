@@ -65,3 +65,8 @@ models_assets/model_a_plantdoc_details.json
 models_assets/dpd_crop_rankings.json
 models_assets/evaluation_metrics.json
 models_assets/ab_experiment_comparison.json
+
+# ----- Local Demo Scripts & Ephemeral Tunnels -----
+LIVE_URL.txt
+start_remote_demo.sh
+
