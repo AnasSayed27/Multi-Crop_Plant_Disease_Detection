@@ -19,7 +19,6 @@ import dpd_model
 # ---------------------------------------------------------
 # Configuration & Constants
 # ---------------------------------------------------------
-CLASS_NAMES_PATH = os.path.join("models_assets", "class_names.json")
 DISEASE_INFO_PATH = os.path.join("models_assets", "disease_info.json")
 UPLOADS_DIR = "uploads"
 CONFIDENCE_THRESHOLD = float(os.getenv("CONFIDENCE_THRESHOLD", "50.0"))  # Gating threshold
@@ -48,25 +47,14 @@ templates = Jinja2Templates(directory="templates")
 # Model & Asset Loading
 # ---------------------------------------------------------
 dpd_engine = None
-class_names: List[str] = []
 disease_info: Dict[str, Any] = {}
 
 
 def load_assets():
-    """Loads class names, disease metadata, and initializes Vision Transformer model."""
-    global dpd_engine, class_names, disease_info
+    """Loads disease metadata and initializes Vision Transformer model."""
+    global dpd_engine, disease_info
 
-    # 1. Load Class Names
-    if os.path.exists(CLASS_NAMES_PATH):
-        try:
-            with open(CLASS_NAMES_PATH, "r", encoding="utf-8") as f:
-                class_names = json.load(f)
-            print(f"Loaded {len(class_names)} class names from '{CLASS_NAMES_PATH}'.")
-        except Exception as e:
-            print(f"Error loading class names: {e}")
-            class_names = []
-
-    # 2. Load Disease Information & Advisory Knowledge Base
+    # 1. Load Disease Information & Advisory Knowledge Base
     if os.path.exists(DISEASE_INFO_PATH):
         try:
             with open(DISEASE_INFO_PATH, "r", encoding="utf-8") as f:
@@ -76,7 +64,7 @@ def load_assets():
             print(f"Error loading disease info: {e}")
             disease_info = {}
 
-    # 3. Initialize PyTorch Vision Transformer Inference Engine
+    # 2. Initialize PyTorch Vision Transformer Inference Engine
     try:
         dpd_engine = dpd_model.DPDInferenceEngine()
     except Exception as e:
@@ -246,7 +234,7 @@ async def predict_crop_disease(
     Handles leaf image upload, validates file type and size, runs DPD ViT Model B prediction
     asynchronously, extracts Top-1 & Top-3 predictions, formats advisory details, and logs history.
     """
-    global dpd_engine, class_names, disease_info
+    global dpd_engine, disease_info
     
     if dpd_engine is None or not dpd_engine.loaded:
         load_assets()
@@ -443,14 +431,22 @@ async def get_disease_library():
     if not disease_info:
         load_assets()
     
+    seen_pairs = set()
     library_items = []
     for raw_cls, info in disease_info.items():
         if info.get("is_background", False):
             continue
+        crop = info.get("crop", "Unknown")
+        disease = info.get("disease", "Unknown")
+        pair_key = (crop.lower().strip(), disease.lower().strip())
+        if pair_key in seen_pairs:
+            continue
+        seen_pairs.add(pair_key)
+
         library_items.append({
             "raw_class": raw_cls,
-            "crop": info.get("crop", "Unknown"),
-            "disease": info.get("disease", "Unknown"),
+            "crop": crop,
+            "disease": disease,
             "status": info.get("status", "Unknown"),
             "symptoms": info.get("symptoms", ""),
             "cause": info.get("cause", ""),
@@ -459,6 +455,8 @@ async def get_disease_library():
             "prevention": info.get("prevention", "")
         })
     
+    # Sort catalog alphabetically by crop name, then disease name
+    library_items.sort(key=lambda x: (x["crop"].lower(), x["disease"].lower()))
     return {"library": library_items}
 
 # Hugging Face Space Gradio & FastAPI Integration

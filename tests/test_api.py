@@ -153,10 +153,53 @@ def test_disease_library():
     assert response.status_code == 200
     data = response.json()
     assert "library" in data
-    assert len(data["library"]) > 0
-    first_item = data["library"][0]
-    assert "crop" in first_item
-    assert "disease" in first_item
+    items = data["library"]
+    assert len(items) > 0
+
+    # Verify zero duplicates across the entire catalog
+    seen = set()
+    for item in items:
+        pair = (item["crop"].lower().strip(), item["disease"].lower().strip())
+        assert pair not in seen, f"Duplicate catalog item found: {pair}"
+        seen.add(pair)
+
+    # Verify alphabetical sorting by crop
+    crops = [i["crop"].lower() for i in items]
+    assert crops == sorted(crops), "Library catalog is not sorted alphabetically by crop name!"
+
+
+def test_statistics_filters_out_non_crop():
+    """Ensures non-crop / low-confidence scans do not contaminate pathology metrics."""
+    email = "stat_filter_farmer@agri.com"
+    username = "stat_filter_user"
+    password = "password_123"
+
+    reg_resp = client.post("/auth/register", json={
+        "username": username,
+        "email": email,
+        "password": password
+    })
+    token = reg_resp.json()["token"]
+    user_id = reg_resp.json()["user"]["id"]
+    headers = {"Authorization": f"Bearer {token}"}
+
+    # Save 1 real disease prediction
+    database.save_prediction(user_id, "Potato", "Late Blight", 94.0, "uploads/test1.jpg")
+    # Save 3 non-crop test scans
+    database.save_prediction(user_id, "Non-Crop", "No Plant Leaf Detected", 15.0, "uploads/test2.jpg")
+    database.save_prediction(user_id, "Non-Crop", "No Plant Leaf Detected", 18.0, "uploads/test3.jpg")
+    database.save_prediction(user_id, "Non-Crop", "No Plant Leaf Detected", 12.0, "uploads/test4.jpg")
+
+    stats_resp = client.get("/api/statistics", headers=headers)
+    assert stats_resp.status_code == 200
+    stats = stats_resp.json()["statistics"]
+
+    # Total scans includes all 4
+    assert stats["total_scans"] == 4
+    # Top disease must be the genuine plant disease, NOT "No Plant Leaf Detected"
+    assert stats["top_disease"] == "Late Blight"
+    assert "Non-Crop" not in stats["crop_counts"]
+    assert "No Plant Leaf Detected" not in stats["disease_counts"]
 
 
 # --------------------------------------------------------------------

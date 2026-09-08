@@ -290,7 +290,7 @@ def get_user_stats(user_id: int) -> Dict[str, Any]:
     cursor.execute("""
         SELECT disease, COUNT(*) as count 
         FROM predictions 
-        WHERE user_id = ? 
+        WHERE user_id = ? AND crop != 'Non-Crop' AND disease != 'No Plant Leaf Detected'
         GROUP BY disease 
         ORDER BY count DESC 
         LIMIT 1
@@ -301,7 +301,7 @@ def get_user_stats(user_id: int) -> Dict[str, Any]:
     cursor.execute("""
         SELECT crop, COUNT(*) as count 
         FROM predictions 
-        WHERE user_id = ? 
+        WHERE user_id = ? AND crop != 'Non-Crop'
         GROUP BY crop
     """, (user_id,))
     crop_counts = {row["crop"]: row["count"] for row in cursor.fetchall()}
@@ -309,7 +309,7 @@ def get_user_stats(user_id: int) -> Dict[str, Any]:
     cursor.execute("""
         SELECT disease, COUNT(*) as count 
         FROM predictions 
-        WHERE user_id = ? 
+        WHERE user_id = ? AND crop != 'Non-Crop' AND disease != 'No Plant Leaf Detected'
         GROUP BY disease
     """, (user_id,))
     disease_counts = {row["disease"]: row["count"] for row in cursor.fetchall()}

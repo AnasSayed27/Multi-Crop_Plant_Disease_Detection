@@ -62,7 +62,6 @@ test_database.db
 models_assets/consolidated_30_images_eval_results.json
 models_assets/t2_20_images_eval_results.json
 models_assets/model_a_plantdoc_details.json
-models_assets/dpd_crop_rankings.json
 models_assets/evaluation_metrics.json
 models_assets/ab_experiment_comparison.json
 
