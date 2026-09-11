@@ -1,0 +1,102 @@
+{
+  "schema_version": 2,
+  "diagram_type": "workflow",
+  "meta": {
+    "title": "Clinical Plant Disease Diagnostic Workflow",
+    "animation": "trace",
+    "visual_preset": "signal-flow",
+    "quality_profile": "showcase",
+    "views": [
+      {
+        "id": "happy-path",
+        "label": "Primary Diagnostic Journey",
+        "focus": ["farmer", "val_filter", "upload_store", "preprocess", "vit_forward", "dual_heads", "joint_ranking", "advisory_match", "client_result"],
+        "note": "Follows the complete execution path from raw leaf upload to 5-pillar advisory rendering."
+      },
+      {
+        "id": "safety-and-uncertainty",
+        "label": "Rejection & Uncertainty Gates",
+        "focus": ["val_filter", "uncertain_gate", "client_result"],
+        "note": "Highlights input MIME guard and confidence thresholding (<40%) for non-crop foliage."
+      },
+      {
+        "id": "model-scoring",
+        "label": "Dual-Head Joint Likelihood",
+        "focus": ["preprocess", "vit_forward", "dual_heads", "joint_ranking", "db_log"],
+        "note": "Details the ViT 768-dim forward pass and candidate ranking across 333 supported pairs."
+      }
+    ],
+    "output": "docs/diagrams/diagnostic-workflow.html"
+  },
+  "lanes": [
+    { "id": "client", "label": "Client UI & Farmer" },
+    { "id": "gateway", "label": "FastAPI Ingress & Safety Gates", "variant": "exception" },
+    { "id": "ml_engine", "label": "ViT Deep Learning Runtime" },
+    { "id": "advisory_db", "label": "Clinical Knowledge & Persistence" }
+  ],
+  "phases": [
+    { "id": "intake", "label": "Ingress & Validation", "fromCol": 0, "toCol": 1 },
+    { "id": "inference", "label": "ViT Dual-Head Inference", "fromCol": 2, "toCol": 3, "variant": "emphasis" },
+    { "id": "resolution", "label": "Advisory Matching & Reporting", "fromCol": 4, "toCol": 5, "variant": "dashed" }
+  ],
+  "groups": [
+    { "id": "intake_guard", "label": "Input safety validation", "lane": "gateway", "fromCol": 0, "toCol": 1, "variant": "security" },
+    { "id": "model_pipeline", "label": "ViT dual-head pipeline", "lane": "ml_engine", "fromCol": 2, "toCol": 3, "variant": "emphasis" },
+    { "id": "persistence_flow", "label": "Advisory resolution & WAL commit", "lane": "advisory_db", "fromCol": 4, "toCol": 5, "variant": "dashed" }
+  ],
+  "mainPath": ["farmer", "val_filter", "upload_store", "preprocess", "vit_forward", "dual_heads", "joint_ranking", "advisory_match", "client_result"],
+  "nodes": [
+    { "id": "farmer", "lane": "client", "col": 0, "type": "external", "label": "Farmer / User", "sublabel": "uploads leaf photo", "width": 132 },
+    { "id": "val_filter", "lane": "gateway", "col": 0, "type": "security", "label": "MIME & Size Gate", "sublabel": "JPEG/PNG <= 10MB", "tag": "validate", "width": 132 },
+    { "id": "upload_store", "lane": "gateway", "col": 1, "type": "backend", "label": "Image Sandboxing", "sublabel": "uuid4 hash in uploads", "width": 132 },
+    { "id": "preprocess", "lane": "ml_engine", "col": 1, "type": "backend", "label": "PIL Transforms", "sublabel": "224x224 RGB tensor", "width": 132 },
+    { "id": "vit_forward", "lane": "ml_engine", "col": 2, "type": "backend", "label": "ViT Backbone", "sublabel": "768-d latent vector", "tag": "Timm ViT-B/16", "width": 132 },
+    { "id": "dual_heads", "lane": "ml_engine", "col": 3, "type": "backend", "label": "Dual Heads", "sublabel": "55 plant / 175 disease", "tag": "Softmax", "width": 132 },
+    { "id": "uncertain_gate", "lane": "gateway", "col": 4, "type": "security", "label": "Confidence Gate", "sublabel": "conf < 40% flag", "tag": "uncertainty", "width": 132 },
+    { "id": "joint_ranking", "lane": "ml_engine", "col": 4, "type": "backend", "label": "Joint Likelihood", "sublabel": "333-pair P(P) x P(D)", "tag": "Geometric mean", "width": 132 },
+    { "id": "db_log", "lane": "advisory_db", "col": 4, "type": "database", "label": "SQLite WAL Log", "sublabel": "persist diagnosis", "tag": "WAL mode", "width": 132 },
+    { "id": "advisory_match", "lane": "advisory_db", "col": 5, "type": "database", "label": "Advisory Matcher", "sublabel": "5-pillar prescription", "tag": "disease_info", "width": 132 },
+    { "id": "client_result", "lane": "client", "col": 5, "type": "frontend", "label": "Diagnostic UI", "sublabel": "Top-3 card & advisory", "width": 132 }
+  ],
+  "edges": [
+    { "id": "farmer-upload", "from": "farmer", "to": "val_filter", "label": "POST /predict", "variant": "emphasis" },
+    { "id": "val-to-store", "from": "val_filter", "to": "upload_store", "label": "valid image", "variant": "default" },
+    { "id": "store-to-prep", "from": "upload_store", "to": "preprocess", "label": "read bytes", "variant": "default" },
+    { "id": "prep-to-vit", "from": "preprocess", "to": "vit_forward", "label": "tensor", "variant": "emphasis" },
+    { "id": "vit-to-heads", "from": "vit_forward", "to": "dual_heads", "label": "768-d", "variant": "emphasis" },
+    { "id": "heads-to-rank", "from": "dual_heads", "to": "joint_ranking", "label": "softmax", "variant": "emphasis" },
+    { "id": "rank-to-gate", "from": "joint_ranking", "to": "uncertain_gate", "label": "check conf", "variant": "security" },
+    { "id": "rank-to-advisory", "from": "joint_ranking", "to": "advisory_match", "label": "top-1 pair", "variant": "emphasis" },
+    { "id": "advisory-to-db", "from": "advisory_match", "to": "db_log", "label": "record", "variant": "dashed" },
+    { "id": "advisory-to-client", "from": "advisory_match", "to": "client_result", "label": "render UI", "variant": "emphasis", "role": "return" }
+  ],
+  "cards": [
+    {
+      "dot": "cyan",
+      "title": "Ingress & Safety Gates",
+      "items": [
+        "MIME inspection guarantees uploads are genuine JPEG, PNG, or WebP images",
+        "Payloads over 10 MB are rejected immediately before touching memory",
+        "Confidence scores below 40% trigger uncertain/non-crop warnings"
+      ]
+    },
+    {
+      "dot": "emerald",
+      "title": "Dual-Head ViT Scoring",
+      "items": [
+        "ViT extracts global attention patch embeddings without recurrent convolutions",
+        "Softmax probabilities are computed across 55 crops and 175 candidate pathologies",
+        "Geometric mean confidence prevents ranking inversions across all 333 supported pairs"
+      ]
+    },
+    {
+      "dot": "rose",
+      "title": "Prescription & Telemetry",
+      "items": [
+        "Diagnoses resolve to verified 5-pillar advisory (organic, chemical, prevention, pesticides, fertilizers)",
+        "SQLite records historical records in WAL mode with indexed timestamps",
+        "Clients receive top-3 differential diagnoses and exportable clinical PDF reports"
+      ]
+    }
+  ]
+}

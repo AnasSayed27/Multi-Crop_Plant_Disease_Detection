@@ -1,0 +1,87 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "Multi-Crop Disease Detection Runtime Architecture",
+    "subtitle": "FastAPI, Dual-Head Vision Transformer, 333-Pair Taxonomy & SQLite Engine",
+    "quality_profile": "showcase",
+    "views": [
+      {
+        "id": "diagnostic-path",
+        "label": "Primary Diagnostic Path",
+        "focus": ["client", "api", "engine", "vit", "assets"],
+        "note": "Follows foliar image ingestion from client upload through ViT dual-head inference to differential diagnosis."
+      },
+      {
+        "id": "persistence-and-reporting",
+        "label": "Persistence & Reporting",
+        "focus": ["client", "api", "db", "pdf", "storage"],
+        "note": "Tracks image sandboxing, SQLite WAL telemetry recording, and ReportLab clinical PDF generation."
+      },
+      {
+        "id": "auth-boundary",
+        "label": "Security & Model Assets",
+        "focus": ["auth", "api", "weights", "vit"],
+        "note": "Highlights bcrypt/JWT auth gating and PyTorch checkpoint weight binding."
+      }
+    ]
+  },
+  "components": [
+    { "id": "client", "type": "frontend", "label": "Web Client", "sublabel": "SPA / Camera / Chart.js", "pos": [40, 300], "size": [130, 60] },
+    { "id": "auth", "type": "security", "label": "JWT Auth Guard", "sublabel": "bcrypt + PyJWT", "pos": [40, 140], "size": [130, 60], "tag": "Bearer Token" },
+    { "id": "api", "type": "backend", "label": "FastAPI Gateway", "sublabel": "Uvicorn :8000 (REST)", "pos": [280, 300], "size": [130, 60] },
+    { "id": "engine", "type": "backend", "label": "DPD Engine", "sublabel": "Joint Ranker", "pos": [520, 300], "size": [130, 60], "tag": "333 Pairs" },
+    { "id": "vit", "type": "backend", "label": "Dual-Head ViT", "sublabel": "Timm ViT-B/16 (768-d)", "pos": [760, 300], "size": [130, 60], "tag": "55 P × 175 D" },
+    { "id": "assets", "type": "database", "label": "Taxonomy Store", "sublabel": "JSON Knowledge Base", "pos": [520, 140], "size": [130, 60], "tag": "5 Pillars" },
+    { "id": "weights", "type": "cloud", "label": "Model Weights", "sublabel": "model_b_partial.pth", "pos": [760, 140], "size": [130, 60], "tag": "329 MB" },
+    { "id": "db", "type": "database", "label": "SQLite Database", "sublabel": "WAL mode (users/scans)", "pos": [280, 460], "size": [130, 60], "tag": "Analytics" },
+    { "id": "pdf", "type": "backend", "label": "ReportLab Engine", "sublabel": "Clinical PDF Exporter", "pos": [520, 460], "size": [130, 60], "tag": "PDF Reports" },
+    { "id": "storage", "type": "database", "label": "Image Storage", "sublabel": "/uploads/ (sandboxed)", "pos": [40, 460], "size": [130, 60] }
+  ],
+  "boundaries": [
+    { "kind": "region", "label": "Client Layer", "wraps": ["client", "auth"] },
+    { "kind": "region", "label": "FastAPI Application Server", "wraps": ["api", "db", "pdf", "storage"] },
+    { "kind": "region", "label": "DPD PyTorch Runtime", "wraps": ["engine", "vit", "assets", "weights"] }
+  ],
+  "connections": [
+    { "id": "client-to-api", "from": "client", "to": "api", "label": "predict", "variant": "emphasis" },
+    { "id": "auth-to-client", "from": "auth", "to": "client", "label": "token", "variant": "security", "fromSide": "bottom", "toSide": "top", "labelDy": 24 },
+    { "id": "auth-to-api", "from": "auth", "to": "api", "label": "verify JWT", "variant": "security", "fromSide": "right", "toSide": "top" },
+    { "id": "api-to-engine", "from": "api", "to": "engine", "label": "evaluate", "variant": "emphasis" },
+    { "id": "engine-to-vit", "from": "engine", "to": "vit", "label": "forward", "variant": "emphasis" },
+    { "id": "weights-to-vit", "from": "weights", "to": "vit", "label": "weights", "variant": "dashed", "fromSide": "bottom", "toSide": "top", "labelDy": 24 },
+    { "id": "assets-to-engine", "from": "assets", "to": "engine", "label": "advisory", "fromSide": "bottom", "toSide": "top", "labelDy": 24 },
+    { "id": "api-to-db", "from": "api", "to": "db", "fromSide": "bottom", "toSide": "top" },
+    { "id": "api-to-pdf", "from": "api", "to": "pdf", "label": "PDF report", "variant": "dashed", "fromSide": "bottom", "toSide": "left" },
+    { "id": "api-to-storage", "from": "api", "to": "storage", "label": "save upload", "fromSide": "bottom", "toSide": "right" }
+  ],
+  "cards": [
+    {
+      "dot": "cyan",
+      "title": "Dual-Head Vision Transformer",
+      "items": [
+        "Pretrained ViT-Base backbone extracts a unified 768-dimensional visual embedding",
+        "Two parallel linear classification heads evaluate 55 plant species and 175 pathological conditions",
+        "Joint probability scoring evaluates all 333 valid crop-disease pairings with geometric-mean confidence"
+      ]
+    },
+    {
+      "dot": "emerald",
+      "title": "Application & Data Layer",
+      "items": [
+        "FastAPI handles async REST requests with schema validation and MIME verification",
+        "SQLite runs in Write-Ahead Logging (WAL) mode for low-latency concurrent writes",
+        "ReportLab dynamically compiles clinical diagnostic reports with differential diagnoses"
+      ]
+    },
+    {
+      "dot": "rose",
+      "title": "Clinical Advisory & Safety",
+      "items": [
+        "Every diagnosis links to a verified 5-pillar treatment plan (organic, chemical, prevention, pesticides, fertilizers)",
+        "Out-of-domain and non-crop images trigger automated rejection with confidence thresholding (<40%)",
+        "Upload directory is strictly sandboxed to prevent path traversal or unsafe file execution"
+      ]
+    }
+  ]
+}
