@@ -1,0 +1,6 @@
+# =====================================================
+# Script & Utility Dependencies (e.g. scripts/download_model.py)
+# Not required in production container deployment
+# =====================================================
+gdown>=4.7.0
+requests>=2.28.0

@@ -21,7 +21,7 @@ import dpd_model
 # ---------------------------------------------------------
 DISEASE_INFO_PATH = os.path.join("models_assets", "disease_info.json")
 UPLOADS_DIR = "uploads"
-CONFIDENCE_THRESHOLD = float(os.getenv("CONFIDENCE_THRESHOLD", "50.0"))  # Gating threshold
+CONFIDENCE_THRESHOLD = float(os.getenv("CONFIDENCE_THRESHOLD", "40.0"))  # Gating threshold
 MAX_UPLOAD_SIZE = int(os.getenv("MAX_UPLOAD_SIZE_MB", "10")) * 1024 * 1024  # 10 MB limit
 
 os.makedirs(UPLOADS_DIR, exist_ok=True)
@@ -66,7 +66,7 @@ def load_assets():
 
     # 2. Initialize PyTorch Vision Transformer Inference Engine
     try:
-        dpd_engine = dpd_model.DPDInferenceEngine()
+        dpd_engine = dpd_model.get_inference_engine()
     except Exception as e:
         print(f"Error initializing DPD Inference Engine: {e}")
         dpd_engine = None
@@ -226,6 +226,7 @@ async def get_me(user: Dict[str, Any] = Depends(require_auth)):
 # Image Classification & Prediction Route
 # ---------------------------------------------------------
 @app.post("/predict")
+@app.post("/api/predict")
 async def predict_crop_disease(
     file: UploadFile = File(...),
     current_user: Optional[Dict[str, Any]] = Depends(get_current_user)

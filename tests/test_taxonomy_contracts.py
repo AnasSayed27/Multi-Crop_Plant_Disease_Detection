@@ -79,12 +79,9 @@ class TestTaxonomyContracts:
         pairs = dpd_model.load_333_supported_pairs("models_assets")
         disease_info = assets["disease_info"]
 
-        # Create lightweight engine instance for lookup testing
-        engine = dpd_model.DPDInferenceEngine()
-
         missing_advisory = []
         for pair in pairs:
-            adv = engine._match_advisory(pair, disease_info)
+            adv = dpd_model.DPDInferenceEngine._match_advisory(pair, disease_info)
             if not adv:
                 missing_advisory.append(pair["raw_class"])
                 continue

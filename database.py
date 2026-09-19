@@ -284,7 +284,11 @@ def get_user_stats(user_id: int) -> Dict[str, Any]:
             "disease_counts": {}
         }
     
-    cursor.execute("SELECT AVG(confidence) as avg_conf FROM predictions WHERE user_id = ?", (user_id,))
+    cursor.execute("""
+        SELECT AVG(confidence) as avg_conf 
+        FROM predictions 
+        WHERE user_id = ? AND crop != 'Non-Crop' AND disease != 'No Plant Leaf Detected'
+    """, (user_id,))
     avg_conf = cursor.fetchone()["avg_conf"] or 0.0
     
     cursor.execute("""

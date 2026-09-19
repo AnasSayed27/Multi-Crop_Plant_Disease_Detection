@@ -1,0 +1,86 @@
+# scripts/sections/sec_03_chapter1.py
+from docx.shared import Inches, Pt
+from docx.enum.text import WD_ALIGN_PARAGRAPH
+
+def build_chapter1(doc, helpers):
+    add_h1 = helpers['add_heading_1']
+    add_h2 = helpers['add_heading_2']
+    add_h3 = helpers['add_heading_3']
+    add_p = helpers['add_body_p']
+    add_bullet = helpers['add_bullet_p']
+    add_fig = helpers['add_figure']
+    add_callout = helpers['add_callout_box']
+
+    # -------------------------------------------------------------
+    # CHAPTER 1: INTRODUCTION & PROBLEM DEFINITION
+    # -------------------------------------------------------------
+    add_h1("CHAPTER 1: INTRODUCTION & PROBLEM DEFINITION")
+
+    add_h2("1.1 Agricultural Background & Economic Impact of Foliar Pathogens")
+    add_p("Agriculture forms the foundational backbone of global human civilization, sustaining global food supplies, providing industrial raw materials, and employing over one-quarter of the worldwide workforce. In developing economies, agriculture represents not merely a commercial industry but the primary source of subsistence and economic security for hundreds of millions of smallholder farming families. However, agricultural productivity is under perpetual siege from biological pathogens, environmental stressors, and anthropogenically driven climate variations.")
+    add_p("Among all threats to agronomic output, foliar plant diseases—manifesting primarily as bacterial blights, fungal rusts, powdery and downy mildews, viral mosaics, and necrotic leaf scorches—constitute the single most destructive vector of food insecurity. According to comprehensive epidemiological assessments published by the Food and Agriculture Organization (FAO) of the United Nations and the Centre for Agriculture and Bioscience International (CABI), foliar plant pathogens cause an estimated 20% to 40% reduction in global crop yields annually. In monetary terms, these foliar infestations inflict worldwide economic losses exceeding 20 billion each year, disproportionately impacting vulnerable agrarian communities across Asia, Africa, and Latin America.")
+    add_p("Foliar pathogens compromise agricultural yield through multiple biological mechanisms:")
+    add_bullet("Fungal spores (e.g., Phytophthora infestans in Solanaceae or Puccinia graminis in Poaceae) germinate across the stomatal openings of leaf blades, colonizing mesophyll tissues and triggering rapid necrotic lesions that reduce the effective photosynthetic surface area of the host plant.", bold_prefix="1. Photosynthetic Disruption: ")
+    add_bullet("Bacterial pathogens (such as Xanthomonas campestris) enter through natural hydathodes or mechanical harvest abrasions, proliferating through the vascular parenchyma and causing systemic chlorosis, wilting, and catastrophic organ collapse.", bold_prefix="2. Vascular & Enzymatic Blockage: ")
+    add_bullet("Viral vectors (predominantly transmitted via insect vectors such as whiteflies and aphids, including Tomato Yellow Leaf Curl Virus) reprogram host cellular transcription, arresting apical growth, causing leaf rolling, and permanently depressing fruit maturation.", bold_prefix="3. Systemic Cellular Reprogramming: ")
+    add_p("The consequences of unmitigated foliar outbreaks extend far beyond direct farmgate yield depression. Late-stage fungal sporulation frequently results in complete crop loss, triggering localized food shortages, market price volatility, and catastrophic debt accumulation for smallholder farming households. Consequently, rapid, reliable, and accessible foliar diagnosis is universally recognized as the single most critical intervention point for mitigating crop failure.")
+
+    add_h2("1.2 Existing Diagnostic Paradigms & Their Bottlenecks")
+    add_p("To maintain foliar health, modern agronomy relies on three traditional diagnostic paradigms, each compromised by fundamental operational bottlenecks:")
+    
+    add_bullet("Traditionally, farmers inspect foliage visually to identify disease lesions. While zero-cost, human scouting is inherently subjective and error-prone. Early-stage foliar infections manifest as microscopic chlorotic flecks that are visually indistinguishable between fungal, bacterial, and nutritional disorders. By the time characteristic visual markers emerge (e.g., concentric rings in Early Blight or dark water-soaked lesions in Late Blight), the pathogen has colonized deep internal leaf tissue, severely diminishing chemical control efficacy.", bold_prefix="A. Manual Field Scouting & Visual Heuristics: ")
+    add_bullet("Suspected foliar tissue samples are harvested and dispatched to centralized state or university pathology laboratories for molecular diagnostic assays, including Polymerase Chain Reaction (PCR), Enzyme-Linked Immunosorbent Assay (ELISA), and high-throughput pathogen genome sequencing. While scientifically rigorous with diagnostic accuracy exceeding 99%, laboratory testing is economically and logistically inaccessible to the vast majority of smallholder farmers. Each assay incurs substantial financial expense (0 to 00 per leaf sample) and requires multi-day sample transit latencies (3 to 7 business days)—by which time aggressive epidemics have already devastated entire fields.", bold_prefix="B. Laboratory Molecular Assays: ")
+    add_bullet("The proliferation of smartphones in rural regions prompted early computer vision applications. However, existing commercial and academic mobile apps suffer from a severe architectural flaw: they are siloed into single-crop narrow classifications. A farmer cultivating potato, tomato, and bell pepper must switch between separate specialized models. Furthermore, traditional mobile tools enforce closed-world assumptions: when presented with a non-leaf background object (such as soil, hands, clothing, or weeds), their uncalibrated softmax output emits a falsely confident disease diagnosis, leading to catastrophic misapplication of expensive and hazardous chemical pesticides.", bold_prefix="C. Commercial Mobile Vision Applications: ")
+
+    add_h2("1.3 Computer Vision in Precision Agriculture & CNN Inductive Bias")
+    add_p("The evolution of computer vision in foliar pathology spans two distinct historical epochs. Between 2005 and 2014, classical computational methods relied on handcrafted feature engineering. Researchers extracted Gray-Level Co-occurrence Matrices (GLCM), Color Co-occurrence Matrices (CCM), and Scale-Invariant Feature Transform (SIFT) descriptors, pairing them with Support Vector Machines (SVM) or Random Forest classifiers. While computationally lightweight, these handcrafted pipelines were brittle: minor variations in solar illumination angle, shadows, camera sensor noise, or foliar orientation caused catastrophic classification failure.")
+    add_p("The advent of Deep Convolutional Neural Networks (CNNs) in 2015—exemplified by AlexNet, VGG-16, and ResNet-50—fundamentally transformed agricultural imaging by learning hierarchical representations directly from raw pixels. Convolutions operate through local linear filters followed by non-linear activations, capturing fine edge gradients in early layers and compound textures in deeper layers.")
+    add_p("Despite their historical success, CNNs possess inherent architectural inductive biases that severely limit their performance in real-world agricultural environments:")
+    add_bullet("A standard convolutional kernel operates across a restricted spatial footprint (typically 3x3 or 5x5 pixels). To capture global interactions between distant areas of a large leaf, deep CNNs require deep stacks of convolutions and pooling operations. However, this progressive pooling aggressively downsamples spatial resolution, discarding high-frequency lesion boundaries and fine fungal veining.", bold_prefix="1. Locality & Restricted Receptive Fields: ")
+    add_bullet("Convolutions enforce translation equivariance—assuming an image feature has identical meaning regardless of spatial coordinates. In foliar pathology, however, spatial location is biologically critical: chlorosis localized strictly along leaf margins indicates potassium deficiency or bacterial scorch, whereas chlorosis localized between veins indicates magnesium deficiency or systemic virus.", bold_prefix="2. Translation Equivariance Limitations: ")
+    add_bullet("In real-world fields, crop leaves overlap against complex soil clutter, agricultural mulch, ambient sunlight glare, and shadows. CNN kernels frequently fixate on high-contrast background edges rather than subtle foliar lesions, resulting in high laboratory accuracy that collapses in real field deployments.", bold_prefix="3. Sensitivity to Background Clutter: ")
+
+    add_fig(
+        'docs/report_figures/fig_1_1_field_vs_lab.png',
+        'Fig. 1.1: Resolution and environmental gap between PlantVillage lab samples and noisy real-world field leaves',
+        width=Inches(5.2)
+    )
+
+    add_h2("1.4 Motivation for Vision Transformers & Decoupled Dual-Head Modeling")
+    add_p("To overcome the localized receptive field limitations of CNNs, this dissertation pivots to the Vision Transformer (ViT) architecture introduced by Dosovitskiy et al. (2020). By discarding spatial convolutions in favor of self-attention mechanisms, ViT models process image patches as equivalent to sequence tokens in natural language. Every single patch attends to every other patch across the entire image beginning at the very first encoder layer, empowering the model to construct long-range relational dependencies across opposite ends of a leaf blade.")
+    add_p("Crucially, standard academic classification models formulate plant pathology as a monolithic multi-class problem with C distinct classes (e.g. 38 classes in standard PlantVillage). When expanding this approach to cover modern commercial agriculture encompassing 55 crops and 175 pathological conditions, the monolithic approach collapses: the combinatorial explosion yields an immense class output space that suffers from extreme sample sparsity and gradient interference.")
+    add_p("To resolve this fundamental dilemma, we propose a decoupled Dual-Head Vision Transformer (DPD ViT-Base). Biologically, foliar pathology is governed by two independent yet intersecting taxonomic axes:")
+    add_bullet("Determined by macroscopic foliar geometry, venation structure, leaf margins, and botanical texture.", bold_prefix="1. Botanical Identity (Plant Head): ")
+    add_bullet("Determined by microscopic fungal spore patterning, necrotic lesion discoloration, halos, and bacterial exudate.", bold_prefix="2. Pathological Condition (Disease Head): ")
+    add_p("By sharing a deep 768-dimensional latent Vision Transformer representation while projecting into separate, decoupled Plant (55 classes) and Disease (175 classes) linear heads, the model learns generalized botanical morphology and generalized pathological lesions independently. This biological decoupling dramatically enhances transfer learning, prevents overfitting, and enables rigorous joint probability calibration across 333 valid biological pairs.")
+
+    add_h2("1.5 Problem Statement & Research Objectives")
+    add_callout(
+        "FORMAL PROBLEM STATEMENT",
+        "Given an arbitrary foliar image x in R^{H x W x 3} captured under unconstrained field conditions, design and engineer a robust deep learning system that accurately determines whether x contains a valid crop leaf. If valid, the system must independently identify the botanical crop species i in {1, ..., 55} and pathological condition j in {1, ..., 175}, enforce biological taxonomy validity across 333 candidate pairs, compute a monotonically calibrated geometric confidence score, gate out-of-distribution background artifacts, and synthesize an actionable 5-pillar agronomic treatment prescription with automated clinical PDF reporting."
+    )
+
+    add_p("To systematically resolve this problem, this dissertation executes six measurable research objectives:")
+    add_bullet("Curate and structure a comprehensive multi-crop foliar taxonomy encompassing 55 botanical crop species, 175 foliar disease conditions, and 333 biologically validated crop-disease co-occurrence pairs.", bold_prefix="RO-1 (Taxonomic Formulation): ")
+    add_bullet("Design and adapt a Dual-Head Vision Transformer (DPD ViT-Base/16) utilizing a 768-dimensional shared latent backbone driving parallel 55-class plant and 175-class disease linear projection heads.", bold_prefix="RO-2 (Neural Architecture): ")
+    add_bullet("Mathematically formulate and implement a joint-likelihood geometric-mean confidence calibration metric S = sqrt(max(0, P_P * P_D)) * 100 with an empirical 40.0% Out-of-Distribution gating threshold to eliminate non-crop false alarms.", bold_prefix="RO-3 (Confidence Calibration): ")
+    add_bullet("Develop a domain-specific agricultural advisory engine mapping all 333 supported pairs to comprehensive 5-pillar treatment protocols (Symptoms, Cause, Organic Remedies, Chemical Dosages, and Preventive Cultural Measures).", bold_prefix="RO-4 (Agronomic Advisory Engine): ")
+    add_bullet("Engineer an asynchronous FastAPI backend service with SQLite Write-Ahead Logging (WAL) concurrency, IDOR access controls, and automated ReportLab clinical PDF generation.", bold_prefix="RO-5 (Full-Stack Production Service): ")
+    add_bullet("Execute an exhaustive 25-case software verification suite and quantitative benchmarking comparing the proposed DPD ViT-Base against CNN baselines (ResNet-50, VGG-16, MobileNetV3) across accuracy, latency, and out-of-distribution rejection.", bold_prefix="RO-6 (Testing & Empirical Evaluation): ")
+
+    add_h2("1.6 Scope & Limitations of the Dissertation")
+    add_p("The functional scope of this dissertation encompasses foliar diagnosis across 55 commercially significant agricultural crops, including Solanaceae (potato, tomato, pepper, eggplant), Cucurbitaceae (cucumber, squash, melon), Poaceae (corn, wheat, rice), Rosaceae (apple, peach, cherry, strawberry), and Fabaceae (soybean, bean, pea). The system supports 175 discrete pathological conditions, including fungal leaf blights, powdery and downy mildews, bacterial leaf spots, viral mosaics, nutrient deficiency chlorosis, and verified healthy foliage.")
+    add_p("Operational limitations include: (1) the model requires foliar photographs where the infected or healthy leaf constitutes the primary focal subject; (2) severe multi-pathogen co-infections occurring simultaneously on an identical leaf spot are expressed through differential Top-3 rankings rather than multi-label pixel segmentation masks; and (3) real-time sub-150ms inference requires GPU acceleration (NVIDIA CUDA), while CPU-only execution averages 1350ms.")
+
+    add_h2("1.7 Organization of the Dissertation")
+    add_p("The remainder of this dissertation report is structured into seven subsequent chapters:")
+    add_bullet("Reviews deep learning paradigms in agricultural vision, mathematical formulations of self-attention in Vision Transformers, mathematical justifications for dual-head decoupling, and a comprehensive 12-paper comparative literature survey matrix.", bold_prefix="Chapter 2 (Literature Survey): ")
+    add_bullet("Details the IEEE 830 Software Requirements Specification (SRS), establishing functional requirements FR-01 to FR-12, non-functional requirements NFR-01 to NFR-10, hardware/software specifications, and a four-pillar feasibility analysis.", bold_prefix="Chapter 3 (System Requirements): ")
+    add_bullet("Presents high-level layered architecture (Archify), end-to-end clinical workflow, comprehensive UML structural and behavioral models (Use Case, Class, Sequence, Activity, State Machine), DFD Levels 0, 1, and 2, relational database design (ERD), and mathematical calibration proofs.", bold_prefix="Chapter 4 (System Design & Architecture): ")
+    add_bullet("Documents modular codebase architecture, PyTorch dual-head forward pass, tensor transforms, Algorithm 1 pseudocode, FastAPI asynchronous endpoints, SQLite WAL database manager, and ReportLab PDF generator.", bold_prefix="Chapter 5 (Implementation & Methodologies): ")
+    add_bullet("Outlines testing methodology, execution logs for all 25 exhaustive test cases, security audits (IDOR, MIME, DoS), performance benchmarks, and the Requirements Traceability Matrix (RTM).", bold_prefix="Chapter 6 (Software Testing & QA): ")
+    add_bullet("Presents quantitative evaluation metrics across 8 crop families, comparative benchmarking against 5 baseline architectures, out-of-distribution rejection performance, latency profiling, and real-world field case studies.", bold_prefix="Chapter 7 (Results & Discussion): ")
+    add_bullet("Summarizes technical contributions, practical agronomic impact on smallholder farming, operational limitations, and future research directions.", bold_prefix="Chapter 8 (Conclusion & Future Scope): ")
+    add_bullet("Contains the complete 333-Pair Botanical & Pathological Taxonomy Table, OpenAPI REST API schemas, System Deployment Guide, and 5-Pillar Advisory protocols.", bold_prefix="Appendices (A to D): ")
+
+    doc.add_page_break()

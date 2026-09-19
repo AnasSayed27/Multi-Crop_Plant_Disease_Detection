@@ -66,9 +66,6 @@ PV_TO_DPD_MAPPING = {
     'Tomato___healthy': ('tomato', 'healthy', 51, 9, 304)
 }
 
-PAIR_LOOKUP = {(v[2], v[3]): k for k, v in PV_TO_DPD_MAPPING.items()}
-ALL_SUPPORTED_PAIRS = list(PV_TO_DPD_MAPPING.items())
-
 
 def load_333_supported_pairs(assets_dir: str = "models_assets") -> List[Dict[str, Any]]:
     """
@@ -116,8 +113,12 @@ def load_333_supported_pairs(assets_dir: str = "models_assets") -> List[Dict[str
                         "disease_idx": d_idx
                     })
 
-            if len(pairs) == 333:
+            if len(pairs) >= 300:
+                if len(pairs) < 333:
+                    print(f"[DPD Engine] WARNING: Loaded {len(pairs)}/333 pairs. Some pairs failed to match.")
                 return pairs
+            else:
+                raise RuntimeError(f"Only loaded {len(pairs)}/333 pairs, below minimum viable threshold of 300.")
         except Exception as e:
             print(f"[DPD Engine] Notice loading 333 pairs: {e}. Falling back to 38 pairs.")
 
@@ -207,7 +208,8 @@ class DPDInferenceEngine:
         else:
             print(f"[DPD Engine] Checkpoint not found at '{self.checkpoint_path}'.")
 
-    def _match_advisory(self, entry: Dict[str, Any], disease_info: Dict[str, Any]) -> Dict[str, Any]:
+    @staticmethod
+    def _match_advisory(entry: Dict[str, Any], disease_info: Dict[str, Any]) -> Dict[str, Any]:
         """Robust multi-key clinical advisory matching across PlantVillage and DPD naming conventions."""
         if not disease_info:
             return {}
@@ -322,9 +324,7 @@ class DPDInferenceEngine:
                 "symptoms": top1_info.get("symptoms", "Visible foliar lesions or discoloration."),
                 "organic_treatment": top1_info.get("organic_treatment", top1_info.get("treatment", "Apply recommended cultural and biological practices.")),
                 "chemical_treatment": top1_info.get("chemical_treatment", "Apply recommended protective fungicides/bactericides according to IPM thresholds."),
-                "prevention": top1_info.get("prevention", "Maintain balanced crop nutrition and sanitation."),
-                "pesticides": top1_info.get("pesticides", []),
-                "fertilizers": top1_info.get("fertilizers", [])
+                "prevention": top1_info.get("prevention", "Maintain balanced crop nutrition and sanitation.")
             }
         }
 

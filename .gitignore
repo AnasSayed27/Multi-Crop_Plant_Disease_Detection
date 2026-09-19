@@ -69,3 +69,13 @@ models_assets/ab_experiment_comparison.json
 LIVE_URL.txt
 start_remote_demo.sh
 
+# ----- Office / Editor Lock & Temporary Files -----
+.~lock.*
+*.odt
+docs/report_figures/*_raw.png
+
+# ----- Third-Party Reference Materials & Sample Templates -----
+IR-to-RGB_Dissertation_Report_CS-9004.pdf
+testcase sample.docx
+testcase_sample_filled.docx
+

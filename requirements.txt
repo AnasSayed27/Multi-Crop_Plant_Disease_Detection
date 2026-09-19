@@ -17,7 +17,6 @@ python-multipart>=0.0.6
 # Image Processing, Data & Reporting
 pillow>=9.5.0
 numpy>=1.24.0
-pandas>=2.0.0
 reportlab>=3.6.0
 
 # Authentication & Security
@@ -25,9 +24,8 @@ pyjwt>=2.7.0
 passlib>=1.7.4
 cryptography>=40.0.0
 
-# Utilities & Model Download
+# Utilities
 requests>=2.28.0
-gdown>=4.7.0
 
 # Testing & Quality Assurance
 pytest>=7.4.0

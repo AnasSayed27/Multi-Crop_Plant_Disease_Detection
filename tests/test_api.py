@@ -17,7 +17,7 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")
 # Ensure test environment uses isolated test database and 32+ byte secret key
 os.environ["DB_PATH"] = "test_database.db"
 os.environ["JWT_SECRET_KEY"] = "multi_crop_plant_disease_secret_key_2026_super_secure_32bytes"
-os.environ["CONFIDENCE_THRESHOLD"] = "50.0"
+os.environ["CONFIDENCE_THRESHOLD"] = "40.0"
 
 import database
 database.DB_PATH = "test_database.db"
@@ -198,6 +198,7 @@ def test_statistics_filters_out_non_crop():
     assert stats["total_scans"] == 4
     # Top disease must be the genuine plant disease, NOT "No Plant Leaf Detected"
     assert stats["top_disease"] == "Late Blight"
+    assert stats["avg_confidence"] == 94.0
     assert "Non-Crop" not in stats["crop_counts"]
     assert "No Plant Leaf Detected" not in stats["disease_counts"]
 

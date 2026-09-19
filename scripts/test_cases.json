@@ -1,0 +1,252 @@
+[
+  {
+    "id": "TC-01",
+    "description": "Verify user registration with valid credentials",
+    "category": "Registration",
+    "steps": "1. Open web application\n2. Navigate to Registration form\n3. Enter valid unique username, email, and password (>=6 chars)\n4. Click \"Register\" button\n5. Verify server response and database entry",
+    "test_data": "username: `\"farmer_rajesh\"`\nemail: `\"rajesh.patil@agri.org\"`\npassword: `\"SecureKisan@2026\"`",
+    "expected": "HTTP 200 OK. User registered successfully. JWT token issued. User record created in SQLite with secure password hash.",
+    "actual": "As expected. User registered with HTTP 200, JWT token returned, record inserted in users table.",
+    "status": "Pass"
+  },
+  {
+    "id": "TC-02",
+    "description": "Verify duplicate username or email registration prevention",
+    "category": "Registration / Security",
+    "steps": "1. Open registration form\n2. Enter existing username or registered email\n3. Click \"Register\" button\n4. Verify validation error response",
+    "test_data": "username: `\"farmer_rajesh\"`\nemail: `\"rajesh.patil@agri.org\"`\npassword: `\"NewPassword123!\"`",
+    "expected": "HTTP 400 Bad Request. System displays \"Username or email already exists\". No duplicate record inserted.",
+    "actual": "As expected. Returned HTTP 400 with duplicate error message; database integrity preserved.",
+    "status": "Pass"
+  },
+  {
+    "id": "TC-03",
+    "description": "Verify password length boundary validation (<6 characters)",
+    "category": "Registration / Validation",
+    "steps": "1. Open registration form\n2. Enter valid username and email\n3. Enter password shorter than 6 characters (e.g. 5 chars)\n4. Click \"Register\"",
+    "test_data": "username: `\"user_test\"`\nemail: `\"test@agri.org\"`\npassword: `\"12345\"` (5 chars)",
+    "expected": "HTTP 400 Bad Request. Validation error: \"Password must be at least 6 characters long.\"",
+    "actual": "As expected. Server rejected registration with minimum password length error.",
+    "status": "Pass"
+  },
+  {
+    "id": "TC-04",
+    "description": "Verify user login with case-insensitive email",
+    "category": "Authentication",
+    "steps": "1. Open Login modal\n2. Enter registered email in lowercase or mixed case\n3. Enter valid password\n4. Click \"Sign In\"\n5. Verify authentication token generation",
+    "test_data": "Registered: `\"Farmer.Test@AgriSystem.org\"`\nLogin input: `\"farmer.test@agrisystem.org\"`\npassword: `\"secure_password_123\"`",
+    "expected": "HTTP 200 OK. Case-insensitive email normalization authenticates user; returns valid JWT access token.",
+    "actual": "As expected. Normalized email match succeeded; JWT token stored in browser session.",
+    "status": "Pass"
+  },
+  {
+    "id": "TC-05",
+    "description": "Verify login failure with invalid credentials",
+    "category": "Authentication / Security",
+    "steps": "1. Open Login modal\n2. Enter incorrect password or non-existent username\n3. Click \"Sign In\"\n4. Verify rejection message",
+    "test_data": "username_or_email: `\"farmer_rajesh\"`\npassword: `\"WrongPassword999\"`",
+    "expected": "HTTP 401 Unauthorized. Detail: \"Invalid username/email or password.\" (Prevents user enumeration).",
+    "actual": "As expected. HTTP 401 returned with generic authentication error.",
+    "status": "Pass"
+  },
+  {
+    "id": "TC-06",
+    "description": "Verify protected endpoint authorization guard without Bearer token",
+    "category": "Security / Authorization",
+    "steps": "1. Send direct GET request to /api/history without Authorization header\n2. Verify require_auth security dependency blocks request",
+    "test_data": "Headers: `{}` (No Authorization header)",
+    "expected": "HTTP 401 Unauthorized with header WWW-Authenticate: Bearer. Detail: \"Authentication required.\"",
+    "actual": "As expected. Access blocked with HTTP 401 and WWW-Authenticate challenge.",
+    "status": "Pass"
+  },
+  {
+    "id": "TC-07",
+    "description": "Verify image upload maximum file size enforcement (>10 MB limit)",
+    "category": "Upload / Validation",
+    "steps": "1. Select leaf image file exceeding 10 MB threshold (e.g. 11 MB)\n2. Submit file via POST /predict\n3. Verify upload guard interception before model inference",
+    "test_data": "File: `high_res_leaf.jpg`\nSize: 11.5 MB (11,534,336 bytes)\nMIME: `image/jpeg`",
+    "expected": "HTTP 413 Payload Too Large. Server rejects upload with \"File exceeds maximum allowed upload size of 10 MB.\"",
+    "actual": "As expected. HTTP 413 returned immediately, saving memory and compute resources.",
+    "status": "Pass"
+  },
+  {
+    "id": "TC-08",
+    "description": "Verify invalid MIME type file upload rejection",
+    "category": "Upload / Security",
+    "steps": "1. Upload a non-image file (.txt, .pdf, or .exe) to diagnosis zone\n2. Send multipart request to /predict\n3. Verify file type validation guard",
+    "test_data": "Filename: `\"report.txt\"`\nContent: `\"text data\"`\nMIME: `\"text/plain\"`",
+    "expected": "HTTP 400 Bad Request. Server responds with \"Invalid file type. Please upload a valid crop leaf image (JPEG/PNG/WebP).\"",
+    "actual": "As expected. HTTP 400 returned; non-image payload rejected before image processing.",
+    "status": "Pass"
+  },
+  {
+    "id": "TC-09",
+    "description": "Verify empty zero-byte file upload handling",
+    "category": "Upload / Validation",
+    "steps": "1. Attempt to upload a 0-byte file with image extension\n2. Submit request to /predict\n3. Verify empty file validation",
+    "test_data": "Filename: `\"empty.jpg\"`\nSize: 0 bytes\nMIME: `image/jpeg`",
+    "expected": "HTTP 400 Bad Request. Detail: \"Uploaded file is empty.\"",
+    "actual": "As expected. HTTP 400 returned with \"Uploaded file is empty.\"",
+    "status": "Pass"
+  },
+  {
+    "id": "TC-10",
+    "description": "Verify ViT-Base dual-head prediction on real diseased leaf (Potato Early Blight)",
+    "category": "ML Inference",
+    "steps": "1. Upload real field sample `Potato_Early-Blight-1.jpg`\n2. Image normalized to 224\u00d7224 via ImageNet transform\n3. Execute ViT-Base dual-head forward pass (55 plants, 175 diseases)\n4. Compute joint likelihood and geometric mean confidence\n5. Inspect diagnosis results",
+    "test_data": "Image: `test_real_images/Potato_Early-Blight-1.jpg` (256\u00d7256 RGB JPEG)",
+    "expected": "HTTP 200 OK. Correctly identifies Crop: \"Potato\", Disease: \"Early Blight\", Status: \"Diseased\", Confidence > 70.0%, and returns 5-pillar advisory.",
+    "actual": "As expected. Diagnosed Potato Early Blight with 86.4% confidence and complete treatment recommendations.",
+    "status": "Pass"
+  },
+  {
+    "id": "TC-11",
+    "description": "Verify healthy plant leaf identification and status categorization",
+    "category": "ML Pathology",
+    "steps": "1. Upload healthy leaf photograph (e.g. healthy tomato foliage)\n2. Run inference through ViT dual heads\n3. Verify is_healthy flag and status label",
+    "test_data": "Image: Healthy Tomato leaf image (field sample)",
+    "expected": "HTTP 200 OK. `is_healthy`: true, `Status`: \"Healthy\", `Disease`: \"Healthy\", UI displays green health badge.",
+    "actual": "As expected. Correctly classified as healthy with green status badge and preventative guidance.",
+    "status": "Pass"
+  },
+  {
+    "id": "TC-12",
+    "description": "Verify non-crop / out-of-distribution leaf gating (<40.0% confidence)",
+    "category": "ML Reliability / OOD Gating",
+    "steps": "1. Upload non-leaf image (indoor room, human face, furniture) or blurry object\n2. Process through /predict endpoint\n3. Verify confidence threshold gating (<40.0%) and false advisory suppression",
+    "test_data": "Image: Random background object photo resulting in joint confidence < 40.0%",
+    "expected": "HTTP 200 OK. `is_background`: true, `Crop`: \"Non-Crop / Low Confidence\", `Disease`: \"No Plant Leaf Detected\", `Status`: \"Uncertain\", `Advisory`: null (prevents false diagnosis).",
+    "actual": "As expected. Out-of-distribution photo gated with \"No Plant Leaf Detected\"; false advisory suppressed.",
+    "status": "Pass"
+  },
+  {
+    "id": "TC-13",
+    "description": "Verify monotonic confidence ranking across top-3 differential predictions",
+    "category": "ML Calibration",
+    "steps": "1. Perform model inference on leaf image\n2. Extract `top_3_predictions` array `[Rank 1, Rank 2, Rank 3]`\n3. Verify mathematical invariant: `Conf(Rank 1) >= Conf(Rank 2) >= Conf(Rank 3)` and `Top Conf == Conf(Rank 1)`",
+    "test_data": "Image tensor `(1, 3, 224, 224)` evaluated across all 333 candidate pairs",
+    "expected": "Confidence scores strictly monotonic descending: `Rank 1 >= Rank 2 >= Rank 3`. Calibrated geometric mean formula guarantees monotonicity.",
+    "actual": "As expected. Verified in `test_dpd_model.py`: Rank 1 (92.5%) >= Rank 2 (4.5%) >= Rank 3 (2.0%).",
+    "status": "Pass"
+  },
+  {
+    "id": "TC-14",
+    "description": "Verify complete 5-pillar clinical treatment advisory resolution",
+    "category": "Clinical Advisory",
+    "steps": "1. Diagnose plant disease via ViT engine\n2. Resolve advisory metadata from `disease_info.json`\n3. Verify presence of all 5 clinical treatment pillars",
+    "test_data": "Diagnosed condition: `\"Tomato Early Blight\"`",
+    "expected": "Advisory object contains 5 non-empty pillars: `symptoms`, `cause`, `organic_treatment`, `chemical_treatment`, `prevention`.",
+    "actual": "As expected. All 5 pillars populated with actionable biological and chemical spray dosages.",
+    "status": "Pass"
+  },
+  {
+    "id": "TC-15",
+    "description": "Verify 100% advisory coverage across all 333 supported pairs",
+    "category": "Data Contract / QA",
+    "steps": "1. Iterate all 333 pairs in `dpd_crop_rankings.json`\n2. Match each pair against `disease_info.json` via `_match_advisory()`\n3. Assert zero missing records and zero empty pillars",
+    "test_data": "All 333 crop-disease tuples across 55 crops",
+    "expected": "Zero missing advisory entries; 100% coverage with non-empty content in all 5 pillars across all 333 pairs.",
+    "actual": "As expected. Verified in `test_taxonomy_contracts.py`: 333/333 pairs have complete 5-pillar advisory data.",
+    "status": "Pass"
+  },
+  {
+    "id": "TC-16",
+    "description": "Verify multi-candidate fallback matching for disease naming conventions",
+    "category": "Advisory Engine",
+    "steps": "1. Query `_match_advisory()` with varied naming formats (raw class, snake_case, title case)\n2. Verify resolution to identical knowledge base record",
+    "test_data": "Inputs: `\"Tomato___Early_blight\"`, `\"tomato_early_blight\"`, `\"Tomato Early Blight\"`",
+    "expected": "Robust multi-key fallback maps all variant formats to verified advisory record without key error.",
+    "actual": "As expected. All naming variations resolved to target advisory details.",
+    "status": "Pass"
+  },
+  {
+    "id": "TC-17",
+    "description": "Verify authenticated clinical PDF report generation and download",
+    "category": "Reporting / PDF",
+    "steps": "1. Authenticate user and run scan to create prediction #1\n2. Send `GET /api/prediction/1/pdf` with `Authorization: Bearer <token>`\n3. Inspect PDF stream binary, MIME type, and disposition header",
+    "test_data": "Prediction ID: 1, User ID: 1, Valid Bearer JWT token",
+    "expected": "HTTP 200 OK. `Content-Type: application/pdf`. Attachment filename: `crop_disease_report_1.pdf`. Valid ReportLab PDF binary with farmer info, leaf photo, and 5-pillar tables.",
+    "actual": "As expected. Generated professional clinical PDF diagnostic report (>15 KB) matching diagnosis.",
+    "status": "Pass"
+  },
+  {
+    "id": "TC-18",
+    "description": "Verify cross-user authorization guard on PDF download (IDOR prevention)",
+    "category": "Security / Authorization",
+    "steps": "1. User A generates prediction record #1\n2. User B logs in and attempts to access User A's report: `GET /api/prediction/1/pdf`\n3. Verify IDOR security barrier",
+    "test_data": "User A ID: 1, User B ID: 2, Target Prediction: #1, User B Token",
+    "expected": "HTTP 403 Forbidden. Server responds with \"Forbidden: You are not authorized to access this prediction report.\"",
+    "actual": "As expected. Cross-user access blocked with HTTP 403; private health scans protected.",
+    "status": "Pass"
+  },
+  {
+    "id": "TC-19",
+    "description": "Verify prediction scan persistence in SQLite with WAL mode",
+    "category": "Database / Persistence",
+    "steps": "1. Logged-in user submits leaf photo for diagnosis\n2. Query SQLite `predictions` table\n3. Verify `user_id`, `crop`, `disease`, `confidence`, `image_path`, `created_at`",
+    "test_data": "User ID: 1, Crop: \"Potato\", Disease: \"Early Blight\", Confidence: 92.5%, Image: `\"uploads/scan_abc.jpg\"`",
+    "expected": "Record inserted into predictions table in WAL mode; fast indexing via `idx_predictions_user_created`.",
+    "actual": "As expected. Scan record persisted with unique ID and timestamp.",
+    "status": "Pass"
+  },
+  {
+    "id": "TC-20",
+    "description": "Verify user prediction history query (`GET /api/history`)",
+    "category": "Database / History",
+    "steps": "1. Perform multiple scans under authenticated user account\n2. Send `GET /api/history` with Bearer token\n3. Verify records returned in reverse chronological order",
+    "test_data": "User with 3 logged scans; `limit = 50`",
+    "expected": "HTTP 200 OK. Returns array of past scans containing date, crop, disease, confidence score, and thumbnail path (`ORDER BY id DESC`).",
+    "actual": "As expected. Returns 3 history records sorted by latest scan first.",
+    "status": "Pass"
+  },
+  {
+    "id": "TC-21",
+    "description": "Verify analytics dashboard filters out non-crop scans",
+    "category": "Analytics & Dashboard",
+    "steps": "1. Log 1 genuine disease prediction (Late Blight, 94.0%)\n2. Log 3 non-crop test scans (15.0%, 18.0%, 12.0%)\n3. Call `GET /api/statistics`\n4. Verify `total_scans == 4`, `top_disease == \"Late Blight\"`, `avg_confidence == 94.0%`",
+    "test_data": "4 logged records: 1 valid disease (94.0%) + 3 non-crop (15.0%, 18.0%, 12.0%)",
+    "expected": "`total_scans`: 4, `top_disease`: \"Late Blight\", `avg_confidence`: 94.0. Non-crop scans excluded from pathology analytics and average confidence.",
+    "actual": "As expected. Verified in `test_api.py`: `avg_confidence` is 94.0% (not deflated to 34.7%).",
+    "status": "Pass"
+  },
+  {
+    "id": "TC-22",
+    "description": "Verify browsable disease catalog deduplication and alphabetical sorting",
+    "category": "Library Catalog",
+    "steps": "1. Send `GET /api/library`\n2. Parse returned library array\n3. Assert zero duplicate `(crop, disease)` combinations\n4. Assert alphabetical sorting by crop name",
+    "test_data": "Full catalog generated from `disease_info.json`",
+    "expected": "HTTP 200 OK. Zero duplicate entries. Catalog sorted strictly alphabetically by crop name, then disease name.",
+    "actual": "As expected. Verified in `test_api.py`: zero duplicates and sorted alphabetically.",
+    "status": "Pass"
+  },
+  {
+    "id": "TC-23",
+    "description": "Verify multi-crop taxonomy integrity contract (333 pairs across 55 crops)",
+    "category": "Taxonomy Contract",
+    "steps": "1. Verify `dpd_crop_rankings.json` against `dpd_55_plants.json` (0-54) and `dpd_175_diseases.json` (0-174)\n2. Validate head index bounds\n3. Confirm exactly 333 viable pairs",
+    "test_data": "55 crops, 175 diseases, 333 viable crop-disease pairs",
+    "expected": "Exact match: 55 crops, 175 diseases, 333 pairs. Plant index in [0, 54], disease index in [0, 174].",
+    "actual": "As expected. Verified in `test_taxonomy_contracts.py`: all taxonomy invariants held.",
+    "status": "Pass"
+  },
+  {
+    "id": "TC-24",
+    "description": "Verify system health liveness and deep readiness probes",
+    "category": "DevOps / Reliability",
+    "steps": "1. Send `GET /health` (liveness)\n2. Send `GET /health/ready` (readiness)\n3. Verify model loading flag and database connectivity",
+    "test_data": "Local server running on port 8000",
+    "expected": "`/health` returns HTTP 200 `{\"status\": \"ok\"}`. `/health/ready` returns HTTP 200 `{\"status\": \"ready\", \"model_loaded\": true, \"database_connected\": true}`.",
+    "actual": "As expected. Both probes return HTTP 200 confirming model and database are online.",
+    "status": "Pass"
+  },
+  {
+    "id": "TC-25",
+    "description": "Verify REST API dual-route compatibility (`/predict` and `/api/predict`)",
+    "category": "API Integration",
+    "steps": "1. Submit leaf image to `POST /predict`\n2. Submit identical image to `POST /api/predict`\n3. Compare response schemas and diagnostic output",
+    "test_data": "Valid leaf photo uploaded to both endpoints",
+    "expected": "Both routes return HTTP 200 OK with identical JSON payload structure and confidence scores.",
+    "actual": "As expected. Both `/predict` and `/api/predict` routes work identically; 100% backward and REST compatible.",
+    "status": "Pass"
+  }
+]

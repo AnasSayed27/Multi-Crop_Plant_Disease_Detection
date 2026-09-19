@@ -116,7 +116,13 @@ class TestDPDInferenceEngine:
         assert "chemical_treatment" in advisory and len(advisory["chemical_treatment"]) > 0
         assert "prevention" in advisory and len(advisory["prevention"]) > 0
 
+    @pytest.mark.integration
     def test_prediction_with_real_leaf_image(self, engine):
+        """
+        Integration test verifying end-to-end inference against a physical test image.
+        The >70.0% confidence threshold is calibrated for the verified benchmark image
+        Potato_Early-Blight-1.jpg; deselect in CI environments with: pytest -m 'not integration'.
+        """
         real_img_path = "test_real_images/Potato_Early-Blight-1.jpg"
         if not os.path.exists(real_img_path):
             pytest.skip(f"Test image '{real_img_path}' not found.")
