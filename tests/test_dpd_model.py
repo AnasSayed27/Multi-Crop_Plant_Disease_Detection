@@ -73,8 +73,24 @@ class TestDPDInferenceEngine:
     @pytest.fixture(scope="class")
     @staticmethod
     def engine():
+        ckpt_path = os.path.join("models_assets", "model_b_partial_adapted.pth")
+        created_temp = False
+        if not os.path.exists(ckpt_path):
+            os.makedirs("models_assets", exist_ok=True)
+            temp_model = dpd_model.DPDViTDualHead()
+            torch.save(temp_model.state_dict(), ckpt_path)
+            created_temp = True
+            dpd_model._GLOBAL_ENGINE = None
+
         eng = dpd_model.get_inference_engine(assets_dir="models_assets")
-        return eng
+        yield eng
+
+        if created_temp and os.path.exists(ckpt_path):
+            try:
+                os.remove(ckpt_path)
+                dpd_model._GLOBAL_ENGINE = None
+            except OSError:
+                pass
 
     def test_engine_initialization(self, engine):
         assert engine is not None

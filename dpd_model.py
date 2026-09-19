@@ -13,6 +13,7 @@ Dual-Head Vision Transformer Base for Multi-Crop Plant Pathology:
 import os
 import io
 import json
+from pathlib import Path
 from typing import List, Dict, Tuple, Any, Optional
 from PIL import Image
 import numpy as np
@@ -21,6 +22,8 @@ import torch.nn as nn
 import torch.nn.functional as F
 from torchvision import transforms
 import timm
+
+PROJECT_ROOT = Path(__file__).resolve().parent
 
 # ---------------------------------------------------------------------------
 # SUPPORTED 38 CROP-DISEASE PAIRS (Legacy PlantVillage Baseline Fallback)
@@ -179,34 +182,65 @@ class DPDInferenceEngine:
         self._load_weights()
 
     def _resolve_checkpoint(self, path: Optional[str]) -> str:
-        if path and os.path.exists(path):
-            return path
+        if path:
+            requested = Path(path)
+            if not requested.is_absolute():
+                requested = PROJECT_ROOT / requested
+            if requested.is_file():
+                return str(requested)
+
         candidates = [
-            os.path.join(self.assets_dir, "model_b_partial_adapted.pth"),
-            "models_assets/model_b_partial_adapted.pth",
-            "dpd/DPD_pretrained_weight.pth",
-            "DPD_pretrained_weight.pth"
+            PROJECT_ROOT / self.assets_dir / "model_b_partial_adapted.pth",
+            PROJECT_ROOT / "models_assets" / "model_b_partial_adapted.pth",
+            PROJECT_ROOT / "dpd" / "DPD_pretrained_weight.pth",
+            PROJECT_ROOT / "DPD_pretrained_weight.pth"
         ]
         for c in candidates:
-            if os.path.exists(c):
-                return c
-        return candidates[0]
+            if c.is_file():
+                return str(c)
+        return str(candidates[0])
 
     def _load_weights(self):
         if os.path.exists(self.checkpoint_path):
             try:
                 try:
-                    ckpt = torch.load(self.checkpoint_path, map_location=self.device, weights_only=True)
+                    checkpoint = torch.load(self.checkpoint_path, map_location=self.device, weights_only=True)
                 except TypeError:
-                    ckpt = torch.load(self.checkpoint_path, map_location=self.device)
-                self.model.load_state_dict(ckpt, strict=False)
+                    checkpoint = torch.load(self.checkpoint_path, map_location=self.device)
+
+                # Support standard wrapped checkpoint formats
+                if isinstance(checkpoint, dict):
+                    if "state_dict" in checkpoint:
+                        state_dict = checkpoint["state_dict"]
+                    elif "model_state_dict" in checkpoint:
+                        state_dict = checkpoint["model_state_dict"]
+                    else:
+                        state_dict = checkpoint
+                else:
+                    state_dict = checkpoint
+
+                # Remove wrappers sometimes added by DataParallel / DDP
+                if isinstance(state_dict, dict):
+                    state_dict = {
+                        key.removeprefix("module."): value
+                        for key, value in state_dict.items()
+                    }
+
+                missing, unexpected = self.model.load_state_dict(state_dict, strict=False)
+                if missing or unexpected:
+                    raise RuntimeError(
+                        f"Checkpoint state dict does not match DPDViTDualHead architecture.\n"
+                        f"Missing keys: {missing[:10]}\n"
+                        f"Unexpected keys: {unexpected[:10]}"
+                    )
+
                 self.model.eval()
                 self.loaded = True
                 print(f"[DPD Engine] Successfully loaded model checkpoint from '{self.checkpoint_path}' on {self.device}.")
             except Exception as e:
                 print(f"[DPD Engine] Error loading checkpoint '{self.checkpoint_path}': {e}")
         else:
-            print(f"[DPD Engine] Checkpoint not found at '{self.checkpoint_path}'.")
+            print(f"[DPD Engine] Notice: Checkpoint not found at '{self.checkpoint_path}'. Engine initialized without weights.")
 
     @staticmethod
     def _match_advisory(entry: Dict[str, Any], disease_info: Dict[str, Any]) -> Dict[str, Any]:

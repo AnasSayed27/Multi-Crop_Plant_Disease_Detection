@@ -26,6 +26,19 @@ jobs:
           pip install -r requirements.txt
           pip install pytest httpx
 
+      - name: Prepare Test Model Checkpoint
+        run: |
+          python -c "
+          import os, torch, dpd_model
+          os.makedirs('models_assets', exist_ok=True)
+          ckpt = 'models_assets/model_b_partial_adapted.pth'
+          if not os.path.exists(ckpt):
+              print('[CI] Generating architecture-aligned test checkpoint...')
+              m = dpd_model.DPDViTDualHead()
+              torch.save(m.state_dict(), ckpt)
+              print(f'[CI] Created {ckpt} ({os.path.getsize(ckpt)} bytes).')
+          "
+
       - name: Run Pytest Integration & Unit Tests
         env:
           PYTHONPATH: .
