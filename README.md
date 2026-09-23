@@ -246,5 +246,18 @@ Access the containerized application at: **`http://localhost:7860`**
 
 ---
 
+## 📚 Project Documentation & Deliverables
+
+All academic dissertation reports, presentation slides, and official project documentation are organized in the [`documentation/`](documentation/) directory:
+
+- 📄 **Dissertation Report (Word Format)**: [`documentation/Multi_Crop_Plant_Disease_Detection_Dissertation_Report.docx`](documentation/Multi_Crop_Plant_Disease_Detection_Dissertation_Report.docx)
+- 📑 **Dissertation Report (PDF Format)**: [`documentation/Multi_Crop_Plant_Disease_Detection_Dissertation_Report.pdf`](documentation/Multi_Crop_Plant_Disease_Detection_Dissertation_Report.pdf)
+- 🖥️ **Project Defense Presentation (PPTX)**: [`documentation/Multi-Crop Plant Disease Detection Presentation.pptx`](documentation/Multi-Crop%20Plant%20Disease%20Detection%20Presentation.pptx)
+- 📜 **Project Certificate**: [`documentation/Project Certificate.docx`](documentation/Project%20Certificate.docx)
+- 📋 **Project Title Page**: [`documentation/TYCS Project Title Page.docx`](documentation/TYCS%20Project%20Title%20Page.docx)
+
+---
+
 ## ⚖️ License
 This project is licensed under the **MIT License**.
+

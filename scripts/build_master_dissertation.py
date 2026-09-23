@@ -65,7 +65,9 @@ def build_complete_dissertation():
     print("[11/12] Building Appendices (Appendix A: 333-Pair Table, Appendix B, C, D)...")
     sec_11_appendices.build_appendices(doc, helpers)
 
-    output_path = "Multi_Crop_Plant_Disease_Detection_Dissertation_Report.docx"
+    output_dir = os.path.join(os.path.dirname(SCRIPT_DIR), "documentation")
+    os.makedirs(output_dir, exist_ok=True)
+    output_path = os.path.join(output_dir, "Multi_Crop_Plant_Disease_Detection_Dissertation_Report.docx")
     print(f"[12/12] Saving master document to {output_path}...")
     t0 = time.time()
     doc.save(output_path)
